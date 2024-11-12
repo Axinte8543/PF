@@ -1,0 +1,23 @@
+Ca sa lucram trebuie sa intram intr-un terminal din vsc si sa introducem comanda ghci
+Putem sa introducem expresii care vor fi evaluate atunci cand este posibil
+2+3
+x=3, x
+head[1,2,3] #1
+head "abcd" 'a'
+tail "abcd" 'bcd'
+:q-comanda quit
+:cd-change directory
+:t-este comanda type
+Ex: :t "hello"  va afisa "hello" :: [Char]
+       :t not va afisa not :: Bool -> Bool arata ca not este o functie care ia un Bool si returneaza un Bool
+
+
+Adaugam in fisierul nostru .hs urmatoare linii de cod:
+myInt = 31415926535897932384626433832795028841971693993751058209749445923 #este o valoare de tip Integer care poate stoca numere intregi mari
+double :: Integer -> Integer #este declarata ca primeste un Integere si returneaza tot un Integer 
+double x = x+x #doubla primeste un argument x de tip Integer si returneaza x+x
+
+Ca functia asta sa functioneze va trebui sa scriem in terminal:
+:l lab1.hs #:l vine de la load
+Scriem double myInt in terminal si ne va afisa dublul lui myInt #cu ajutorul functiei double
+Daca modificam fisierul lab1.hs va trebui sa il reincarcam cu comanda :r
