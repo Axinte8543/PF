@@ -1,0 +1,187 @@
+: t [ ( ’ a ’ , 1 , " abc " ) ]
+[ ( ’ a ’ , 1 , " abc " ) ] : : Num b => [ ( Char , b , [ Char ] ) ]
+
+Tipuri de baza:
+Integer:4,0,-5   4+3, (+) 4 3 care va da 7, mod 4 3 care va da 1, 4 'mod' 3 care va da 1
+Float:3.14 #sqrt 4, truncate 3.14(partea fractionara eliminata), let x =4 :: Int(variabila x va fi un Int cu valoarea 4)
+Char: 'a'.'A'. '\n' #vom introduce import Data.Char si apoi vom face chr 65,ord 'A', toUpper 'a'
+Bool:True, False # True && False || True, not True
+string:"prog\ndec" # "aa" ++"bb" va da "aabb", "aabb" !! 2 va da 'b', lines "prog\ndec" va da ["prog", "dec"]
+
+Tipuri compuse:
+Tipul lista:
+:t [True, False, True]
+[True, False, True] :: [Bool]
+Tipul tuplu:
+:t (1 :: Int, 'a', "ab")
+(1 :: Int, 'a', "ab") :: (Int, Char, [Char])
+fst (1, 'a') -- numai pentru perechi
+snd(1 'a') 
+
+:t  1 va primi raspunsul 1  ::  Num a => a
+Semnificatia este urmatoare:
+-Num este o clasa de tipuri
+-a este un parametru de tip
+-1 este o valoare de tipul a din clasa Num 
+:t [1,2,3] va primi [1,2,3] :: Num t => [ t ]
+
+
+Functii in Haskell
+Prototipul functiei
+-numele functiei
+-signatura functiei
+Definitia functiei
+-numele functiei 
+-parametrii formali
+-corpul functiei
+Aplicarea functiei
+-numele functiei
+-argumentele
+Ex:
+P: double :: Integer -> Integer    D:double elem = elem + elem    A:double 5
+P: add :: Integer -> Integer -> Integer   D:add elem1 elem2 = elem1 + elem2    A: add 3 7
+P: dist :: (Integer, Integer) -> Integer   D:dist(elem1,elem2)=abs(elem1-elem2)   A:dist(5,7)
+
+
+fact :: Integer -> Integer
+Definitie folosind if:
+fact n = if n == 0 then 1
+	     else n * fact(n-1)
+
+Definitie folosind ecuatii:
+fact 0 = 1
+fact n = n* fact (n-1)
+Ordinea este importanta deoarece mai intai o sa verifice daca este 0 si apoi o sa faca pentru n, daca ar fi in alta ordine nu ar fi corect si nu ar verifica niciodata 0
+
+Definitie folosind cazuri:
+fact n
+   |  n==0        =1
+   |  otherwise  =n * fact(n-1)
+
+
+data Bool = True | False
+(||) :: Bool -> Bool -> Bool
+
+myFunc :: Bool -> Bool
+myFunc False = x #daca argumentul este False va returna x
+myFunc True = True #daca argumentul e adevarat atunci va returna True
+
+
+Fie foo o functie cu urmatorul tip
+foo :: a -> b -> [a] -> [b]
+-are 3 argumente, de tipuri a,b si [a]
+-intoarce un rezultat de tip [b]
+
+ffoo ::  (a -> b) -> [a] -> [b]
+-are 2 argumente de tipuri (a->b) si [a], adica o functie de la a la b si o lista de elemente de tip a
+-intoarce un rezultat de tip [b]
+ffoo f xs = map f xs
+-f este functia pe care o aplici la fiecare element din lista [a], xs este lista de elemente de tip a
+-map f xs aplică funcția f la fiecare element din lista xs și returnează o listă de rezultate de tip b.
+main = print (foo double [1, 2, 3, 4])  -- Aplica funcția double pe fiecare element din listă
+
+
+Liste
+Orice lista poate fi scrisa folosind doar constructorul (:) si lista vida []
+[1,2,3] == 1 : (2 : (3 : [])) == 1 : 2 : 3 : []
+
+interval = [20, 17..1] -- [20,17,14,11,8,5,2]
+[1,2] ++ [3] #[1,2,3]
+
+xs = [0..6]
+[x | x <- xs,  even x]
+[0,2,4,6]
+[ (x,y) | x <- xs , y <- xs, x+y ==10]
+[ (4,6) ,(5,5) ,(6,4)]
+
+[ ( i , j ) | i <− [ 1 . . 2 ] ,let k = 2*i , j <− [ 1 . . k ] ]
+[(1,1),(1,2),(2,1),(2,2),(2,3),(2,4)]
+
+
+:t zip
+zip  ::  [a] -> [b] -> [(a,b)]
+
+ys = ['A' .. 'E']
+zip [1..] ys
+[(1 , 'A') ,(2 , 'B'), (3 , 'C'),(4 , 'D'),(5 , 'E')]
+
+xs = ['A' .. 'Z']
+[x | (i,x) <- [1..]  'zip' xs, even i]
+"BDFHJLNPRTVXZ"
+
+[(x,y) | x <- [1..3], y <- ['A'.. 'D']] #va face o matrice de 3 pe 4 de genul 1,'A', 1,'B' etc
+
+
+Argumentele sunt evaluate doar cand e necesar si doar cat e necesar
+>x=head[]
+>f a = 5
+>f x
+5
+>[1, head [], 3] !! 0
+1
+>[1 , head [ ] , 3 ] ! ! 1
+Exception : Prelude . head : empty l i s t
+
+Drept consecinta a evaluarii lenese, se pot defini liste infinite
+>natural = [0...]
+>take 5 natural
+>[0,1,2,3,4]
+
+>evenNat= [0,2....]
+>take 7 evenNat
+[0,2,4,6,8,10,12]
+
+x:y =[1,2,3]
+>x
+1
+>y
+[2,3]
+x:y este un sablon pentru liste, iar deconstructia valoria [1,2,3] a fost 1:[2,3], iar asa s au potrivit legaturile
+
+(++) :: [a] -> [a] -> [a]
+[x] ++ [1] = [2,1] nu ne va da x-ul cat este si ne va da o eroare
+
+Sabloanele sunt liniare,adica o variabila apare cel mult o data
+x:x:[1] = [2,2,1]
+ttail (x:x:t) =t
+foo x x =  x^2
+Error
+
+
+Operatori
+Operatorii sunt functii cu 2 argumente
+Operatori predefiniti:
+ ( | | ) : : Bool −> Bool −> Bool #Operatorul logic sau True || False
+( : ) : : a −> [ a ] −> [ a ] #Operatorul de cons 1:[2,3,4] --[1,2,3,4]
+(+) : : Num a => a −> a −> a #Operatorul de adunare 3+5 --8
+
+elem :: a -> [a] -> Bool
+>1 'elem' [1,2,3] 
+True
+
+3 + 5 * 4 : [6] ++ 8 - 2 + 3 : [2] == [23, 6, 9, 2] || True == False
+Prioritare: 
+* #inmultire
++ #adunare
+: #adauga un element la inceputul unei liste
+++ #concatenare a listelor
+3+5*4=23
+23:[6]=[23,6] etc
+Care va da True || True == False care va fi True || False care va fi True
+
+Operatorul - este asociativ la stanga
+5-2-1 == (5-2)-1
+Operatorul : asociativ la dreapta
+5:2:[] == 5:(2:[])
+Operatorul ++ asociativ la dreapta
+l1++l2++l3 == l1++(l2++l3)
+Asociative la dreapta: &&,++,:,||,^,^^,.
+Ascoiative la stanga: !!,*,+,-,>>
+
+
+>(++ " world!") "Hello"
+"Hello world!"
+
+>x <-> y = x-y+1
+>(<->3) 4
+2
