@@ -1,0 +1,120 @@
+1.Facem toate permutarile unei liste
+
+>import Data.List #importam biblioteca Data.List
+>:t perumations
+permutations :: [a] -> [[a]]
+>permutations [1,2,3]
+[[1,2,3],[2,1,3],[3,2,1],[2,3,1],[3,1,2],[1,3,2]]
+>permutations "abc"
+["abc","bac","cba","bca","cab","acb"]
+>:m - Data.List #ca sa eliminam lista
+Putem sa adaugam import Data.List in fisier
+Putem sa facem permutations [1,2,..myInt]
+
+2.Subsequences
+import Data.List
+subsequences [1,2,3]
+[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+
+3.
+Trebuie sa avem grija la indentarea in Haskell deoarece ne poate da erori
+Ex:
+double :: Integer -> Integer
+double x = x + x
+este corect, dar 
+double :: Integer -> Integer
+ double x = x + x
+nu este corect din cauza pozitionarii
+
+4.
+maxim :: Integer -> Integer -> Integer
+maxim x y =
+	if (x > y)
+	    then x
+   	    else y
+
+maxim3 x y z =
+	let
+		u = maxim x y
+	in
+		maxim u z
+
+5.
+:t maxim
+maxim :: Ord p => p -> p -> p
+Răspunsul primit trebuie interpretat astfel: p reprezintă un tip arbitrar înzestrat cu o relatie de ordine, iar functia maxim are două argumente de tip p si întoarce un rezultat de tip p.
+
+6.
+a)
+patrat :: Integer -> Integer -> Integer
+patrat x y = x*x + y*y
+b)
+partiate :: Integer -> String
+paritate x = if (mod x 2 == 0) then "par" else "impar"
+c)
+fact :: Integer -> Integer
+fact 0 = 1
+fact n = n * fact(n-1)
+d)
+verif :: Integer -> Integer -> Integer
+verif x y = if (x>y*2) then x else y
+e)
+myMaximum :: (Ord a) => [a] -> a
+myMaximum [] = error "Lista este goală"  -- tratăm cazul în care lista este goală
+myMaximum [x] = x  -- dacă lista conține un singur element, acesta este maximul
+myMaximum (x:xs) = max x (myMaximum xs) -- comparăm primul element cu maximul restului listei
+
+7.
+poly :: Integer -> Integer -> Integer -> Integer -> Integer
+poly a b c x = a*x^2 + b*x + c
+
+8.
+eeny :: Integer -> String
+eeny x = if even x then "eeny" else "meeny"
+
+9.
+fizzbuzz :: Integer -> String
+fizzbuzz x = if (mod x 15 == 0) then "fizzbuzz" else if (mod x 3 == 0) then "fizz" else if (mod x 5 == 0) then "buzz" else show ""
+
+fizzBuzz1 :: Int -> String
+fizzBuzz1 x
+  | x `mod` 3 == 0 && x `mod` 5 == 0 = "FizzBuzz"  -- dacă x este divizibil cu 3 și cu 5
+  | x `mod` 3 == 0 = "Fizz"            -- dacă x este divizibil doar cu 3
+  | x `mod` 5 == 0 = "Buzz"            -- dacă x este divizibil doar cu 5
+  | otherwise = ""                     -- pentru orice alt număr, returnăm un șir vid
+
+10.
+Sirul lui Fibonacci
+fibonacciEcuational :: Integer -> Integer
+fibonacciEcuational 0 = 0
+fibonacciEcuational 1 = 1
+fibonacciEcuational n =
+	fibonacciEcuational (n - 1) + fibonacciEcuational (n - 2)
+sau
+fibonacciCazuri :: Integer -> Integer
+fibonacciCazuri n
+	| n < 2 = n
+	| otherwise = fibonacciCazuri (n - 1) + fibonacciCazuri (n - 2)
+
+Sirul Tribonacci
+
+tribonacciEcuational :: Integer -> Integer
+tribonacciEcuational 1 = 1
+tribonacciEcuational 2 = 1
+tribonacciEcuational 3 = 2
+tribonacciEcuational n =
+	tribonacciEcuational (n - 1) + tribonacciEcuational (n - 2) + tribonacciEcuational (n - 3)
+
+11.
+Coeficientii Binomiali
+binomial :: Integer -> Integer -> Integer
+binomial n 0 = 1
+binomial 0 k = 0
+binomial n k = binomial (n-1) k  + binomial (n-1) (k-1)
+
+binomial :: Int -> Int -> Int
+binomial n k
+  | k == 0 = 1                        -- B(n, 0) = 1
+  | n == 0 = 0                        -- B(0, k) = 0, pentru k > 0
+  | k == n = 1                        -- B(n, n) = 1
+  | otherwise = binomial (n - 1) k + binomial (n - 1) (k - 1)  -- B(n, k) = B(n-1, k) + B(n-1, k-1)
