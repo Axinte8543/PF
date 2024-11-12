@@ -1,0 +1,129 @@
+Curs 1
+Programare imperativa (Cum)
+Explic masinii, pas cu pas, algoritmic, cum sa faca ceva si se întâmpla ce voiam sa se întâmple ca rezultat al executiei masinii.
+-limbaje de programare procedurale
+-limbaje de programare orientate pe obiecte
+Ex:
+lista = [1, 2, 3, 4, 5]
+suma = 0
+for element in lista:
+    suma += element
+print("Suma elementelor este:", suma)
+
+Programare declarativa (Ce)  ̆
+Îi spun masinii ce vreau sa se întâmple si o las pe ea sa se descurce cum sa realizeze acest lucru 
+• limbaje de programare logica 
+• limbaje de interogare a bazelor de date
+• limbaje de programare functionala
+Ex:
+lista = [1, 2, 3, 4, 5]
+suma = sum(lista)
+print("Suma elementelor este:", suma)
+
+
+Haskell este un limbaj functional pur,elegant,lenes si minimalist
+
+1.În Haskell, funcțiile sunt tratate ca first-class citizens, adică sunt valori de sine stătătoare, la fel ca numerele sau listele. Aceasta înseamnă că funcțiile pot fi manipulate și folosite în moduri care nu sunt posibile în multe alte limbaje.
+
+În Haskell, fiind first-class citizens, funcțiile pot fi:
+•Folosite ca argumente pentru alte funcții.
+•Returnate ca rezultate din alte funcții.
+•Stocate în structuri de date (de exemplu, într-o listă de funcții).
+
+-- Functie care primeste o functie ca argument si aplica acea functie asupra unui numar
+aplicaFunctie :: (Int -> Int) -> Int -> Int
+aplicaFunctie f x = f x
+Aici, aplicaFunctie primește o funcție f ca argument, pe care o aplică asupra lui x.
+
+-- Functia de incrementare
+increment :: Int -> Int
+increment x = x + 1
+
+-- Utilizare
+main = print (aplicaFunctie increment 5)  -- Rezultatul va fi 6
+
+
+2.Functiile sunt pure.
+• Produc aceleasi rezultate pentru aceleasi intrari.
+• O bucata de cod nu poate corupe datele altei bucati de cod.
+• Distinctie clara între partile pure si partile care comunica cu mediul extern.
+
+-- Functie pura care calculeaza patratul unui numar
+patrat :: Int -> Int
+patrat x = x * x
+
+-- Functie care nu afecteaza alte valori sau variabile
+main = do
+    print (patrat 3)    -- Rezultatul va fi 9
+    print (patrat 3)    -- Rezultatul va fi tot 9
+
+
+
+Sintaxa:
+
+Comentarii:
+−− comentariu pe o l i n i e
+{ − comentariu pe
+mai multe
+l i n i i −}
+
+Identificatori:
+• siruri formate din litere, cifre, caracterele _ si ’ (apostrof)
+• identificatorii pentru variabile încep cu litera mic  ̆ a sau _  ̆
+• identificatorii pentru tipuri si constructori încep cu litera mare  ̆
+• Haskell este sensibil la majuscule (case sensitive)
+double x = 2 * x 
+data Point a = Pt a a
+
+Blocuri si indentare.
+Blocurile sunt delimitate prin indentare.
+fact  n  =  if  n == 0
+			then 1
+			else n *f a c t ( n−1)
+trei = let
+		a = 1
+		b = 2
+	 in a + b
+Echivalent, putem scrie
+trei = let  { a = 1; b = 2}  in a + b
+trei = let  a = 1; b = 2 in a + b
+
+
+In Haskell variabilele sunt imutabile:
+= nu este opreator de atribuire
+x=1 reprezinta o legatura (binding)
+din momentul in care o variabila este legata la o valoare, acea valoare nu mai poate fi schimbata
+
+let .. in .. este o expresie care creeaza un domeniu de vizibilitate local
+Presupunem:
+x = 1 
+z = let x = 3 in x
+
+z va avea 3 si x va avea 1
+
+
+x  =  let
+             z = 5
+       	     g u = z + u
+       in   let
+        	    z = 7
+             in g 0 + z
+Cum functioneaza:
+1. x este definita folosind o expresie care contine variabila z cu valoare 5 si functia g u= z+u
+2. g u va folosi valoarea lui z definita in primul let, adica z=5. Practie g u = 5+u
+3. In primul let exista un alt let care redefineste variabila z ca fiind 7 doar local in interiorul acelui bloc, apelul g 0 din interiorul celui de-al doilea let se va referi tot la g u definit in primul bloc let, unde z=5, deci g 0=5+0=5
+4.Calculul lui x va fi g 0+z adica g 0=5, z=7, deci expresia devine 5+7=12=x
+
+Clauza ...where ... creeaza un domeniu de vizibilitate local
+f x = g x + g x + z
+where
+g x = 2 * x
+z = x−1
+f 1=?
+
+g 1= 2*1=2
+z=1-1=0
+f 1=2+2+0=4
+
+let .. in ... este o expresie
+x= [let y=8 in y, 9] -- x=[8,9]
