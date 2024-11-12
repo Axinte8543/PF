@@ -1,0 +1,137 @@
+Functii anonime
+>(\x -> x + 1) 3
+4
+>map (\x -> x+1) [1,2,3,4]
+[2,3,4,5]
+
+flip :: (a -> b -> c) -> (b -> a -> c)
+-definita folosind sabloane
+f x y-parametri
+flip f x y = f x y 
+-definitia folosind expresii lambda
+flip f = \x  y -> f y x
+-flip ca valoare de tip functie
+flip = \f x y -> f y x
+
+(gof)(x)=g(f(x))
+In Haskell:
+(.) :: (b -> c) -> (a -> b) -> (a -> c) 
+#operatorul (.) este folosit pentru a compune două funcții, prima funcție g de tip b -> c, a doua funcție f de tip a -> b, iar rezultatul compunerii celor două funcții este o funcție de tip a -> c
+(g . f) x = g (f x)
+
+>(take 5 . reverse) [1..10] # . compune functiile
+[10,9,8,7,6]
+>(head . reverse . take 5) [1..10]
+5
+>head . reverse . take 5 $ [1..10]
+5
+>head $ reverse $ take 5 $ [ 1 . . 1 0 ] # $ forteaza evaluarea intregii expresii
+5
+
+
+Currying
+-procedeul prin care o functie cu mai multe argumente este transformata intr-o functie care are un singur argument si intoarce o alta functie
+-in Haskell toate functiile sunt in forma curry, deci au un singur argument
+
+Ex:
+f :: (Int, String) -> String
+f (n,s) = take n s #extrage primele n caractere din sirul s
+>let cf = curry f
+>:t cf
+cf  ::  Int -> String -> String #cf va deveni o functie care primeste mai intai un Int si intoarce o functie care cand primeste un string va returna un string
+>f(1,"abc")
+"a"
+>cf 1 "abc"
+"a"
+
+
+
+Map:
+Definiti o functie care pentru o lista de numere întregi data ridica la patrat fiecare element din lista. 
+-Solutie descriptiva 
+squares : : [Int] −> [Int]
+squares xs = [ x * x | x <− xs ]
+-Solutie recursiva 
+squares : : [Int] −> [Int]
+squares [ ] = [ ]
+squares ( x : xs ) = x*x : squares xs
+
+Date fiind o functie de transformare si o lista aplicati functia fiecarui element al unei liste date.
+-Solutie descriptiva
+map : : ( a −> b ) −> [ a ] −> [ b ]
+map  f  xs = [f x | x <− xs ]
+>map ($ 3) [(4  +) , (10 *) , (^  2) , sq r t ]
+[7.0 ,30.0 ,9.0 ,1.7320508075688772]
+
+-Solutie recursiva 
+map : : ( a −> b ) −> [ a ] −> [ b ]
+map f [ ] = [ ]
+map f ( x : xs ) = f x : map f xs
+
+Solutie folosind map
+squares : : [ I n t ] −> [ I n t ]
+squares xs = map sqr xs
+		  where sqr x = x * x 
+#va defini mai intai functia locala sqr care calculeaza patratul lui x, iar apoi foloseste map pentru a aplica fiecarui element x din lista
+
+
+Filter:
+Definiti o functie care selecteaza elementele pozitive dintr-o lista.
+Solutie descriptiva 
+positives : : [ I n t ] −> [ I n t ]
+positives xs = [ x | x <− xs , x > 0 ]
+Solutie recursiva 
+positives  : : [ I n t ] −> [ I n t ]
+positives  [ ] = [ ]
+positives  ( x : xs ) | x > 0 = x : positives  xs
+			      | otherwise = positives xs
+
+Date fiind un predicat (functie booleana) si o lista, selectati elementele din lista care satisfac predicatul.
+Solutie descriptiva
+filter : : ( a −> Bool ) −> [ a ] −> [ a ]
+filter p xs = [ x | x <− xs , p x ]
+Solutie recursiva
+filter : : ( a −> Bool ) −> [ a ] −> [ a ]
+filter p [ ] = [ ]
+filter p ( x : xs ) | p x = x : filter p xs
+			| otherwise = filter p xs
+
+
+Solutie folosind filter
+positives   : : [ I n t ] −> [ I n t ]
+positives   xs = filter pos xs
+			  where pos x = x > 0
+#definim functia local pos care verifica daca x este mai mare ca 0, si apoi folosim filter pentru a pastra in lista doar elementele care indeplinesc conditia pos
+
+
+
+Fold
+Definiti o functie care data fiind o lista de numere întregi calculeaza suma elementelor din lista.
+Solutie recursiva
+sum : : [ I n t ] −> I n t
+sum [ ] = 0
+sum ( x : xs ) = x + sum xs
+
+Definiti o functie care concateneaza o lista de liste.
+Solutie recursiva
+concat : : [ [ a ] ] −> [ a ]
+concat [ ] = [ ]
+concat ( xs : xss ) = xs ++ concat xss
+
+foldr :: (a −> b −> b) −> b −> [a] −> b
+Solutie recursiva 
+foldr : : ( a −> b −> b ) −> b −> [ a ] −> b
+foldr f i [ ] = i
+foldr f i ( x : xs ) = f x ( f ol d r f i xs )
+
+Solutie folosind foldr
+foldr :: (a −> b −> b) −> b −> [a] −> b
+sum : : [ I n t ] −> I n t
+sum xs = foldr ( + ) 0 xs #+ este functia de adunare, 0 este valoarea de pornire a acumularii, xs este lista pe care dorim sa o adunam
+foldr ( + ) 0 [ 1 , 2 , 3] == 1 + (2 + (3 + 0 ) )
+
+Solutie folosind foldr
+foldr :: (a −> b −> b) −> b −> [a] −> b
+concat : : [ I n t ] −> I n t
+concat xs = foldr (++ ) [ ] xs
+foldr (++ ) [ ] [ "Ana " , " are " , " mere . " ]== "Ana " ++ ( " are " ++ ( " mere . " ++ [ ] ) )
