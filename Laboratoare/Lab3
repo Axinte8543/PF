@@ -1,0 +1,138 @@
+1.
+a)
+verifL :: [Int] -> Bool
+verifL xs = length xs `mod` 2 ==0 
+
+b)
+takefinal :: Int -> [Int] -> [Int]
+takefinal n xs = drop (length xs - n) xs
+#length xs -n calculeaza cate elemente trebuie eliminate de la inceputul listei pentru a obtine ultimele n elemente, drop elimina aceste elemente, lasand ultimele n
+c)
+remove :: Int -> [Int] -> [Int]
+remove n xs = take n xs ++ drop (n+1) xs 
+#take n xs ia primele n elemente din lista, drop (n+1) xs elimina primele n+1 elemente din lista, pastrand doar elementele de dupa pozitia n, apoi le concatenam obtinand lista fara elementul de poz n
+
+firstAndRest :: [a] -> (a, [a])
+firstAndRest xs = (head xs, tail xs)
+
+2.
+semiPareRec :: [Int] -> [Int]
+semiPareRec [] = [] #daca functia e goala returneaza o lista goala
+semiPareRec (h:t) #lista e despartita de capul listei h si coada t
+  | even h = h `div` 2 : t' #daca h e par se imparte la 2 si e adaugat in lista rezultata urmat de t'
+  | otherwise = t' #daca este h este impar, este ignorat, iar lista continua recursiv cu t'
+  where t' = semiPareRec t #t' este lista rezultata din apelul recursiv pe coada listei t
+
+a)
+myreplicate :: Int -> a -> [a]
+myreplicate n v = replicate' n v
+  where
+    replicate' 0 _ = []  -- Cazul în care n este 0, returnăm lista goală
+    replicate' n v = v : replicate' (n - 1) v  -- Adăugăm v la listă și apelăm recursiv pentru restul
+
+b)
+sumImp :: [Int] -> Int
+sumImp [] = 0
+sumImp (h:t)
+  | odd h = h + sumImp t
+  | otherwise = sumImp t
+
+c)
+totalLen :: [String] -> Int
+totalLen [] = 0
+totalLen (h:t)
+  | head h == 'A' = length h + totalLen t -- Dacă șirul începe cu 'A', adăugăm lungimea acestuia
+  | otherwise = totalLen t  -- Altfel, trecem la următorul șir din listă
+
+3.
+-- Funcția nrVocale calculează numărul de vocale din șirurile palindrom
+nrVocale :: [String] -> Int
+nrVocale [] = 0  -- Cazul în care lista este goală
+nrVocale (x:xs)
+  | isPalindrome x = countVowels x + nrVocale xs  -- Dacă x este palindrom, adunăm vocalele
+  | otherwise = nrVocale xs  -- Altfel, trecem la următorul șir
+
+-- Funcția care verifică dacă un șir este palindrom
+isPalindrome :: String -> Bool
+isPalindrome s = s == reverse s
+
+-- Funcția care numără vocalele dintr-un șir
+countVowels :: String -> Int
+countVowels s = length (filter (`elem` "aeiouAEIOU") s)  -- Filtrăm vocalele și le numărăm
+
+4.
+
+ssss :: Int -> [Int] -> [Int]
+ssss _ [] = []
+ssss n (h:t)
+  | even h = h : n : t'
+  | otherwise = h:t'
+  where t' = ssss n t
+
+
+Liste definite cu proprietati caracteristice sau prin selectie
+Ex:
+semiPareComp :: [Int] -> [Int]
+semiPareComp l = [ x `div` 2 | x <- l, even x ]
+
+5.
+divizori :: Int -> [Int]
+divizori n = [x | x <- [1..n], n `mod` x == 0]
+
+6.
+listadiv :: [Int] -> [[Int]]
+listadiv xs = [ [x | x <- [1..n], n `mod` x == 0] | n <- xs ]
+
+7.
+a)
+inInterval :: Int -> Int -> [Int] -> [Int]
+inInterval a b [] = []
+inInterval a b (h:t)
+   | h >= a && h <= b = h : t'
+   | otherwise =t'
+   where t' = inInterval a b t
+b)
+inInterval :: Int -> Int -> [Int] -> [Int]
+inInterval a b xs = [ x | x<-xs, x>=a, x<=b] 
+
+8.
+a)
+pozitiveRec :: [Int] -> Int
+pozitiveRec [] = 0  -- Cazul de bază: lista este goală, deci nu există numere pozitive
+pozitiveRec (x:xs)
+  | x > 0     = 1 + pozitiveRec xs  -- Dacă x este pozitiv, adaugăm 1 și continuăm recursiv
+  | otherwise = pozitiveRec xs      -- Dacă x nu este pozitiv, continuăm doar pe restul listei
+b)
+pozitiveComp :: [Int] -> Int
+pozitiveComp xs = length [ x | x<-xs, x>0]  
+
+9.
+a)
+pozitiiImpareRec :: [Int] -> [Int]
+pozitiiImpareRec xs = pozitiiImpareAux xs 0  -- apelăm funcția auxiliară cu indexul inițial 0
+
+-- Funcția auxiliară
+pozitiiImpareAux :: [Int] -> Int -> [Int]
+pozitiiImpareAux [] _ = []  -- Dacă lista e goală, returnăm o listă goală
+pozitiiImpareAux (x:xs) index
+  | odd x     = index : pozitiiImpareAux xs (index + 1)  -- Dacă elementul e impar, adăugăm indexul la rezultat
+  | otherwise = pozitiiImpareAux xs (index + 1)          -- Dacă elementul e par, trecem la următorul
+b)
+pozitiiImpareComp :: [Int] -> [Int]
+pozitiiImpareComp xs = [index | (index, x) <- zip [0..] xs, odd x]
+#zip [0..] xs creează o listă de perechi (index, x) unde index este poziția elementului în listă, iar x este valoarea elementului.
+
+zip [1, 2, 3] ['a', 'b', 'c'] -- Rezultat: [(1, 'a'), (2, 'b'), (3, 'c')]
+
+
+10.
+a)
+multDigitsRec :: String -> Int
+multDigitsRec [] = 1  -- Dacă șirul e gol, returnăm 1
+multDigitsRec (x:xs)
+  | isDigit x = digitToInt x * multDigitsRec xs  -- Dacă x este cifră, îl înmulțim cu rezultatul restului
+  | otherwise = multDigitsRec xs                 -- Dacă x nu este cifră, trecem la următorul caracter
+
+b)
+multDigitsComp :: String -> Int
+multDigitsComp str = product [digitToInt x | x <- str, isDigit x]
