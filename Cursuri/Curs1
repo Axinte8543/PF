@@ -80,7 +80,7 @@ Blocuri si indentare.
 Blocurile sunt delimitate prin indentare.
 fact  n  =  if  n == 0
 			then 1
-			else n *f a c t ( n−1)
+			else n *fact(n−1)
 trei = let
 		a = 1
 		b = 2
