@@ -1,0 +1,30 @@
+Foldr
+
+foldr :: (a −> b −> b) −> b −> [a] −> b
+Date fiind o functie de actualizare a valorii calculate cu un element curent, o valoare initiala, 
+si o lista calculati valoarea obtinuta prin aplicarea repetata a functiei de actualizare fiecarui element din list  ̆ a. ̆
+
+Suma patratelor numerelor pozitive:
+
+f3r :: [Int] -> Int
+f3r xs = sum[x*x | x<-xs,x>0]
+
+f :: [Int] -> Int
+f = foldr (+) 0 . map (^2) . filter (>0)
+
+Compunerea functiilor
+compose :: [a−>a] −> (a−>a)
+compose = foldr(.) id
+
+>compose [(+1),(^2)] 3
+10
+
+myFoldl :: (a -> b -> b) -> b -> [a] -> b
+myFoldl _ i [] = i
+myFoldl f i (x:xs) = f x (myFoldl f i xs)
+--myFoldl (+) 0 [1,2,3] => 6 diferenta este ca foldl o sa faca operatiile de la stanga la dreapta
+
+
+inf = take 10 $ map (+10) [1..]
+foldr poate fi folosita pe liste infinite (în anumite cazuri)
+foldl nu poate fi folosita pe liste infinite niciodata.
