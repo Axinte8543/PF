@@ -1,0 +1,63 @@
+1.
+exercitiu :: [Int] -> Int
+exercitiu = foldr (+) 0 Prelude.. map (^2) Prelude.. filter (odd) 
+
+2.
+exercitiu1 :: [Bool] -> Bool
+exercitiu1 = foldr (&&) True 
+
+3.
+allSatisfy :: (Int -> Bool) -> [Int] -> Bool
+allSatisfy p = foldr (\x acc -> p x && acc) True
+
+4.
+anySatisfy :: (Int -> Bool) -> [Int] -> Bool
+anySatisfy p = foldr (\x acc -> p x || acc) False
+
+6.
+listToInt :: [Integer] -> Integer
+listToInt = foldl (\acc x -> acc * 10 + x) 0
+
+7.
+a)
+eliminaCaracter :: Char -> String -> String
+eliminaCaracter c xs = filter (/= c) xs
+
+b)
+rmCharsRec :: String -> String -> String
+rmCharsRec [] xs = xs
+rmCharsRec (c:cs) xs = rmCharsRec cs (eliminaCaracter c xs)
+
+c)
+rmCharsFoldr :: String -> String -> String
+rmCharsFoldr chars xs = foldr eliminaCaracter xs chars
+
+8.
+rev :: [a] -> [a]
+rev = foldl (flip (:)) []         
+
+9.
+myElem :: Int -> [Int] -> Bool
+myElem y = foldr (\x acc -> x == y || acc) False
+
+10.
+myUnzip :: [(a, b)] -> ([a], [b])
+myUnzip = foldr (\(x, y) (xs, ys) -> (x:xs, y:ys)) ([], [])
+
+11.
+union :: [Int] -> [Int] -> [Int]
+union xs ys = foldr (\y acc -> if y `elem` acc then acc else y : acc) xs ys
+
+12.
+intersect :: [Int] -> [Int] -> [Int]
+intersect xs ys = foldr (\y acc -> if y `elem` xs && not (y `elem` acc) then y : acc else acc) [] ys
+
+13.
+permutations :: [Int] -> [[Int]]
+permutations [] = [[]]
+permutations xs = [y:zs | (y, ys) <- select xs, zs <- permutations ys]
+
+-- Funcție auxiliară care selectează fiecare element din listă împreună cu restul listei fără acel element
+select :: [Int] -> [(Int, [Int])]
+select [] = []
+select (x:xs) = (x, xs) : [(y, x:ys) | (y, ys) <- select xs]
