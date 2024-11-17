@@ -1,0 +1,67 @@
+1.
+[ x^2 | x <- [1..10], x `rem` 3 == 2 ]
+-- Rezultatul va fi: [4, 25, 64]
+[ (x,y) | x <- [1..5], y <- [x..(x+2)] ]
+-- Rezultatul va fi: [(1,1),(1,2),(1,3),(2,2),(2,3),(2,4),(3,3),(3,4),(3,5),(4,4),(4,5),(4,6),(5,5),(5,6),(5,7)]
+[ (x,y) | x <- [1..3], let k = x^2, y <- [1..k] ]
+-- Rezultatul va fi: [(1,1),(2,1),(2,2),(2,3),(2,4),(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(3,9)]
+[ x | x <- "Facultatea de Matematica si Informatica", elem x ['A'..'Z'] ]
+-- Rezultatul va fi: "FMI"
+[ [x..y] | x <- [1..5], y <- [1..5], x < y ]
+-- Rezultatul va fi: [[1,2],[1,2,3],[1,2,3,4],[1,2,3,4,5],[2,3],[2,3,4],[2,3,4,5],[3,4],[3,4,5],[4,5]]
+
+2
+3
+4.
+factori :: Int -> [Int]
+factori x = [y | y<-[1..x], x `mod` y == 0]
+
+prim :: Int -> Bool
+prim x = if length (factori x) == 2 then True
+              else False
+
+numerePrime :: Int -> [Int]
+numerePrime x = [ y | y<-[2..x], prim y==True]
+
+5.
+myzip3 :: [a] -> [b] -> [c] -> [(a, b, c)]
+myzip3 (x:xs) (y:ys) (z:zs) = (x, y, z) : myzip3 xs ys zs
+myzip3 _ _ _ = []
+
+
+6.
+map (\x -> 2 * x) [1..10]
+-- Rezultatul va fi: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+map (1 `elem`) [[2,3], [1,2]]
+-- Rezultatul va fi: [False, True]
+map (`elem` [2,3]) [1,3,4,5]
+-- Rezultatul va fi: [False, True, False, False]
+firstEl :: [(Char,Int)] -> String
+firstEl xs = map pos xs
+          where pos (x, _) = x  
+
+7.
+sumList :: [[Int]] -> [Int]
+sumList xs = map sum xs
+
+8.
+prel2 :: [Int] -> [Int]
+prel2 xs = map dublu xs
+            where dublu x = if odd x then x*2
+					                  else x `div` 2
+
+9.
+functie :: Char -> [String] -> [String]
+functie c xs = [x | x <- xs, c `elem` x]          
+
+10.
+numereimparepatrate :: [Int] -> [Int]
+numereimparepatrate xs = map (^2) (filter odd xs)
+
+11.
+patratePozitiiImpare :: [Int] -> [Int]
+patratePozitiiImpare xs = map (\(i, x) -> x^2) (filter (odd Prelude.. fst) (zip [0..] xs))
+
+12.
+numaiVocale1 :: [String] -> [String]
+numaiVocale1 xs = [filter (`elem` "aeiouAEIOU") x | x <- xs]
