@@ -114,15 +114,15 @@ sum ( x : xs ) = x + sum xs
 
 Definiti o functie care concateneaza o lista de liste.
 Solutie recursiva
-concat : : [ [ a ] ] −> [ a ]
+concat :: [[a]]−>[a]
 concat [ ] = [ ]
 concat ( xs : xss ) = xs ++ concat xss
 
 foldr :: (a −> b −> b) −> b −> [a] −> b
 Solutie recursiva 
-foldr : : ( a −> b −> b ) −> b −> [ a ] −> b
-foldr f i [ ] = i
-foldr f i ( x : xs ) = f x ( f ol d r f i xs )
+myFoldr :: (a -> b -> b) -> b -> [a] -> b
+myFoldr _ i [] = i
+myFoldr f i (x:xs) = f x (myFoldr f i xs)
 
 Solutie folosind foldr
 foldr :: (a −> b −> b) −> b −> [a] −> b
