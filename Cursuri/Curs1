@@ -23,7 +23,8 @@ print("Suma elementelor este:", suma)
 
 Haskell este un limbaj functional pur,elegant,lenes si minimalist
 
-1.În Haskell, funcțiile sunt tratate ca first-class citizens, adică sunt valori de sine stătătoare, la fel ca numerele sau listele. Aceasta înseamnă că funcțiile pot fi manipulate și folosite în moduri care nu sunt posibile în multe alte limbaje.
+1.În Haskell, funcțiile sunt tratate ca first-class citizens, adică sunt valori de sine stătătoare, la fel ca numerele sau listele.
+Aceasta înseamnă că funcțiile pot fi manipulate și folosite în moduri care nu sunt posibile în multe alte limbaje.
 
 În Haskell, fiind first-class citizens, funcțiile pot fi:
 •Folosite ca argumente pentru alte funcții.
@@ -111,7 +112,8 @@ x  =  let
 Cum functioneaza:
 1. x este definita folosind o expresie care contine variabila z cu valoare 5 si functia g u= z+u
 2. g u va folosi valoarea lui z definita in primul let, adica z=5. Practie g u = 5+u
-3. In primul let exista un alt let care redefineste variabila z ca fiind 7 doar local in interiorul acelui bloc, apelul g 0 din interiorul celui de-al doilea let se va referi tot la g u definit in primul bloc let, unde z=5, deci g 0=5+0=5
+3. In primul let exista un alt let care redefineste variabila z ca fiind 7 doar local in interiorul acelui bloc, 
+   apelul g 0 din interiorul celui de-al doilea let se va referi tot la g u definit in primul bloc let, unde z=5, deci g 0=5+0=5
 4.Calculul lui x va fi g 0+z adica g 0=5, z=7, deci expresia devine 5+7=12=x
 
 Clauza ...where ... creeaza un domeniu de vizibilitate local
