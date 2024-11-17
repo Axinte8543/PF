@@ -1,0 +1,117 @@
+Tipuri de date algebrice:
+
+data Bool = False | True
+
+not :: Bool -> Bool
+not False = True
+not True = False
+
+data Season = Spring | Summer | Autumn | Winter
+
+succesor :: Season -> Season
+succesor Spring = Summer
+succesor Summer = Autumn
+succesor Autumn = Winter
+succesor Winter = Spring
+
+showSeason : : Season −> String
+showSeason Spring = "Primavara"
+showSeason Summer = "Vara"
+showSeason Autumn = "Toamna"
+showSeason Winter = "Iarna"
+
+
+data Point a b = Pt a b
+
+pr1 :: Point a b -> a
+pr1 (Pt x _) = x
+
+pr2 :: Point a b -> b
+pr2 (Pt _ y) = y
+
+:t (Pt 1 "c")
+( Pt 1 " c " ) : : Num a => Point a [Char]
+
+:t Pt
+Pt :: a −> b −> Point a b
+
+:t (Pt 1)
+(Pt 1) :: Num a => b −> Point a b
+
+
+Declararea listelor ca tip de date algebrice
+
+data List a = Nil | Cons a (List a)
+• List este constructor de tip
+• Nil si Cons sunt constructori de date
+
+append : : Li s t a −> Li s t a −> Li s t a
+append N i l ys = ys
+append ( Cons x xs ) ys = Cons x ( append xs ys )
+
+data StrInt = String | Int -gresit
+data StrInt = VS String | VI Int -corect
+[VI 1, VS "abc", VI 34, VI 0, VS "xyz"] :: [ StrInt ]
+
+Liste cu simblouri
+data List a = Nil | Cons a ( List a )
+data [ a ] = [ ] | a : [ a ]
+Constructorii listelor sunt [] si : unde
+[ ] : : [ a ]
+( : ) : : a −> [ a ] −> [ a ]
+
+
+Tupleuri cu simboluri
+data (a,b) = (a,b)
+data (a,b,c) = (a,b,c)
+
+( , ) : : a −> b −> ( a , b )
+( , , ) : : a −> b −> c −> ( a , b , c )
+
+
+Exemplu numere naturale(peano)
+Declaratie ca tip de date algebric folosind sabloane
+data Nat = Zero | Succ Nat
+Adunarea pe tipul de date algebric:
+(+++ ) :: Nat −> Nat −> Nat
+m +++ Zero = m
+m +++ ( Succ n ) = Succ (m +++ n )
+Comparati cu versiunea folosind notatia predefinita: ̆
+
+( + ) :: Int −> Int −> Int
+m + 0 = m
+m + n = (m + ( n−1) ) + 1
+
+Tipul Maybe
+data Maybe a = Nothing | Just a
+Rezultate optionale
+divide :: int −> int −> Maybe int
+divide n 0 = Nothing
+divide n m = Just ( n ‘ div ‘ m)
+Argumente optionale
+
+power :: Maybe int −> int −> int
+power Nothing n = 2 ^ n
+power ( Just m) n = m ^ n
+
+wrong :: int −> int −> int
+wrong n m = divide n m + 3 -gresit
+
+right : : int −> int −> int
+right n m = case divide n m of
+                Nothing −> 3
+                Just r −> r + 3
+
+
+Tipul Either
+data Either a b = Left a | Right b
+mylist : : [ Either Int String ]
+mylist = [ Left 4 , Left 1 , Right "hello" , Left 2 ,
+            Right " " , Right " world " , Left 17]
+
+addints :: [ Either Int String ] −> Int
+addints [] = 0
+addints (Left n : xs) = n + addints xs
+addints (Right s : xs) = addints xs
+addints’ : : [ Either Int String ] −> Int
+addints’ xs = sum [n | Left n <− xs]
