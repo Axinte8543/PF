@@ -1,0 +1,77 @@
+1.data Fruct= Mar String Bool
+          | Portocala String Int
+          deriving (Show, Eq)
+
+O expresie de tipul Fruct este fie un Mar String Bool, fie o Portocala String Int. 
+Vom folosi un String pentru a indica soiul de mere sau de portocale, un Bool pentru a indica daca marul are viermi si un Int pentru a exprima numarul de felii dintr-o portocala. De exemplu:
+ionatanFaraVierme = Mar "Ionatan" False
+goldenCuVierme = Mar "Golden Delicious" True
+portocalaSicilia10 = Portocala "Sanguinello" 10
+cosFructe = [Mar "Ionatan" FaSlse, Portocala "Sanguinello" 10, Mar "Golden Delicious" True]
+
+a)
+ePortocalaDeSicilia :: Fruct -> Bool
+ePortocalaDeSicilia (Portocala soi _) = soi `elem` ["Tarocco", "Moro", "Sanguinello"]
+ePortocalaDeSicilia _ = False
+--ePortocalaDeSicilia (Portocala "Sanguinello" 10) => True
+
+b)
+nrFeliiSicilia :: [Fruct] -> Int
+nrFeliiSicilia fructe = sum [felii | Portocala soi felii <- fructe, soi `elem` ["Tarocco", "Moro", "Sanguinello"]]
+--nrFeliiSicilia cosFructe => 10
+
+c)
+nrMereViermi :: [Fruct] -> Int
+nrMereViermi fructe = length [soi | Mar soi bool <-fructe, bool==True]
+--nrMereViermi cosFructe => 1
+
+2.
+type NumeA = String
+type Rasa = String
+data Animal = Pisica NumeA | Caine NumeA Rasa
+     deriving Show
+
+a)
+vorbeste :: Animal -> String
+vorbeste (Pisica _) = "Meow!"
+vorbeste (Caine _ _) = "Woof!"
+--vorbeste (Pisica "Tom") => "Meow!"
+
+b)
+rasa :: Animal -> Maybe String
+rasa (Pisica _) = Nothing
+rasa (Caine _ r) = Just r
+--rasa (Caine "Rex" "Labrador") => Just "Labrador"
+
+3.
+data Linie = L [Int]
+  deriving Show
+data Matrice = M [Linie]
+  deriving Show
+
+linie1 = L [1, 2, 3]
+linie2 = L [4, 5, 6]
+linie3 = L [7, 8, 9]
+matrice1 = M [linie1, linie2, linie3]
+
+a)
+verifica :: Matrice -> Int -> Bool
+verifica (M linii) n = all (\(L xs) -> foldr (+) 0 xs == n) linii
+
+test_verifica1 = verifica matrice1 6 -- False
+
+b)
+doarPozN :: Matrice -> Int -> Bool
+doarPozN (M linii) n = all (\(L xs) -> length xs == n && all (>0) xs) linii
+test_verifica2 = doarPozN matrice1 3 -- True
+
+c)
+corect :: Matrice -> Bool
+corect (M []) = True
+corect (M (L xs : linii)) = all (\(L ys) -> length ys == length xs) linii
+
+test_verifica3 = corect matrice1 -- True
+
+
+
+
