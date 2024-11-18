@@ -1,0 +1,92 @@
+Cu type se pot redenumi tipuri deja existente.
+type FirstName = String
+type LastName = String
+type Age = Int
+type Height = Float
+type Phone = String
+data Person = Person FirstName LastName Age Height Phone
+
+first Name :: Person −> String
+first Name ( Person firstname _ _ _ _ ) = first name
+
+age :: Person −> Int
+age ( Person _ _ age _ _ ) = age
+
+let ionel = Person "Ion" "Ionescu" 20 175.2 "0712334567"
+>firstName ionel
+"Ion"
+
+data Person = Person { firstName :: String
+, lastName :: String
+, age :: Int
+, height :: Float
+, phoneNumber :: String
+}
+
+gigel = Person { firstName = "Gheorghe"
+, lastName= "Georgescu"
+, age = 30 , height = 192.3
+, phoneNumber = " 0798765432 "
+}
+
+nextYear :: Person −> Person
+nextYear person = person { age = age person + 1 }
+
+Sa scriem functia my_elem care testeaza daca un element apartine unei liste.
+my_elem x ys = or [ x==y | y<-ys ]
+my_elem 1 [2,3,4]
+my_elem "word" [ "list" , "of" , "word" ]
+my_elem (+ 2 ) [ ( + 2 ) , sqrt ] -- nu functioneaza
+
+Clasa de tipuri Eq
+În signatura functiei my_elem trebuie sa precizam ca tipul a este în clasa Eq
+my_elem :: Eq a => a −> [ a ] −> Bool
+
+class Eq a where
+(== ) :: a −> a −> Bool
+
+instance Eq Char where
+x == y = ord x == ord y
+
+Clasa de tipuri Ord
+Clasa Ord este clasa tipurilor de date înzestrate cu o relatie de ordine.
+În definitia clasei Ord s-a impus o constrângere de tip. 
+Astfel, orice instanta a clasei Ord trebuie sa fie instanta a clasei Eq.
+
+Clasa de tipuri Show
+Sa presupunem ca vrem sa definim o clasa de tipuri pentru datele care pot fi afisate. 
+O astfel de clasa trebuie sa contina o metoda care sa indice modul de afisare:
+class Show a where
+show : : a −> string −− analogul lui "ToString
+
+instance Show a => Show [ a ] where
+show [] = "[]"
+show (x:xs) = "[" ++ showSep x xs ++ "]"
+  where
+    showSep x [] = show x
+    showSep x (y:ys) = show x ++ " , " ++ showSep y ys
+
+Derivare Automata
+data Season = Spring | Summer | Autumn | Winter
+deriving (Eq, Ord , Show)
+
+Instantiere exlpicita:
+instance Eq a => Eq ( Point a b ) where
+(== ) ( Pt x1 y1 ) ( Pt x2 y2 ) = ( x == x1 )
+
+data Season = Spring | Summer | Autumn | Winter
+
+instance Eq Season where
+    Spring == Spring = True
+    Summer == Summer = True
+    Autumn == Autumn = True
+    Winter == Winter = True
+    _ == _ = False
+
+instance Show Season where
+    show Spring = "Primavara"
+    show Summer = "Vara"
+    show Autumn = "Toamna"
+    show Winter = "Iarna"
+
+Exemplu liste:
