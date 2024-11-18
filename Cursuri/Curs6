@@ -90,3 +90,29 @@ instance Show Season where
     show Winter = "Iarna"
 
 Exemplu liste:
+data Lista = Nil
+           | a ::: Lista
+           deriving (Show)
+
+infixr 5 :::
+
+(+++) :: Lista -> Lista -> Lista
+infixr 5 +++
+Nil +++ ys = ys
+(x ::: xs) +++ ys = x ::: (xs +++ ys)
+
+Constructori Simblouri:
+eqList :: Eq a => Lista a -> Lista a -> Bool
+eqList Nil Nil = True
+eqList (x ::: xs) (y ::: ys) = x == y && eqList xs ys
+eqList _ _ = False
+
+instance (Eq a) => Eq (Lista a) where
+    (==) = eqList
+
+showList :: Show a => Lista a -> String
+showList Nil = "Nil"
+showList (x ::: xs) = show x ++ " ::: " ++ showList xs
+
+instance (Show a) => Show (Lista a) where
+    show = showList
