@@ -1,0 +1,373 @@
+1.Ce tip are expresia filter (\(x,y) -> x == y) [("aa","aa"),("b","bb"),("abc","d")]?
+
+Răspuns: a) [([Char],[Char])].
+	Expresia filter selectează elementele unei liste care îndeplinesc o anumită condiție.
+	Lista [("aa", "aa"), ("b", "bb"), ("abc", "d")] este o listă de perechi de șiruri de caractere (adică [([Char], [Char])]).
+	Funcția lambda \(x,y) -> x == y primește un tuplu (x, y) și returnează True dacă x este egal cu y, altfel False.
+	Lista [("aa","aa"),("b","bb"),("abc","d")] este o listă de tupluri de tip ([Char], [Char]), adică [(String, String)].
+	\(x,y) -> x == y are tipul (String, String) -> Bool
+	filter primește o funcție de tip (String, String) -> Bool și o listă de tip [(String, String)]
+	filter (\(x,y) -> x == y) [("aa","aa"),("b","bb"),("abc","d")] va returna o listă de tupluri de tip ([Char], [Char]) care conține doar elementele pentru care x este egal cu y.
+
+2.Care din funcțiile de mai jos este o secțiune dreaptă pentru <+?
+
+Raspuns: c) (<+ [1,2,3])
+O secțiune dreaptă pentru un operator binar este o funcție care fixează al doilea argument al operatorului.
+	"abc" este de tip String.
+	Aceasta ar fi o secțiune stângă, nu dreaptă, deoarece fixează primul argument.
+	[1,2,3] este de tip [Int].
+	Aceasta este o secțiune dreaptă, deoarece fixează al doilea argument al operatorului (<+).
+	secDreapta :: String -> Bool
+	secDreapta = (<+ [1,2,3])
+	print (secDreapta "abc")
+
+
+3.Ce tip are o funcție care primește ca parametru o listă de șiruri de caractere și calculează lista de lungimi asociate fiecărui șir?
+
+Răspuns: d) f :: [String] -> [Int].
+	O listă de șiruri de caractere are tipul [String] (unde String este un alias pentru [Char]).
+	Calcularea lungimii fiecărui șir returnează o listă de întregi ([Int]).
+	Exemplu: f ["abc", "d", "efg"] ar returna [3, 1, 3].
+
+4.Ce returnează instrucțiunea filter (== "A_") ["Ana", "Are", "Mere"]?
+
+Răspuns: b) [].
+	Funcția filter selectează elementele listei care sunt egale cu "A_".
+	Niciun element din lista ["Ana", "Are", "Mere"] nu este egal cu "A_". #functia nu ne cere sa inceapa cu litera A
+	Rezultatul este lista vidă [].
+
+5.Care din implementările de mai jos este corectă pentru funcția hof :: (a -> b -> c) -> (a -> b) -> a -> c?
+
+Răspuns: b) hof h f a = h a (f a).
+	h :: a -> b -> c: Este o funcție care primește două argumente de tip a și b și returnează un rezultat de tip c.
+	f :: a -> b: Este o funcție care primește un argument de tip a și returnează un rezultat de tip b
+	hof h f a: Trebuie să returneze un rezultat de tip c.
+	h a (f a):
+
+	f a :: b: Aplică funcția f la argumentul a, rezultând un b.
+	h a (f a) :: c: Aplică funcția h la argumentele a și f a, rezultând un c.
+	hof h f a = h a (f a) este corectă, deoarece aplică funcția f la argumentul a pentru a obține un b, apoi aplică funcția h la argumentele a și f a pentru a obține un c.
+
+6. Care dintre definițiile de mai jos este corectă?
+
+Raspuns: d) data Tree a = Empty | Branch a ( Tree a ) ( Tree a )
+Defineste un tip parametric Tree a cu constructorii Empty și Branch.
+Empty este un constructor fără argumente.
+Branch este un constructor cu trei argumente: un element de tip a și doi subarbori de tip Tree a.
+
+data Tree a = Empty | Branch a ( Tree a ) ( Tree a ) definește un tip de date algebric parametric Tree a cu doi constructori:
+Empty reprezintă un arbore gol.
+Branch reprezintă un nod care conține un element de tip a și doi subarbori de tip Tree a
+
+7.Ce calculează funcția f xs = foldr (&&) True [x `mod` 3 > 0 | x <- xs]?
+
+Raspuns:c) dacă nu există numere divizibile cu 3 în listă
+
+[x mod 3 > 0 | x <- xs]: Aceasta este o list comprehension care generează o listă de valori Bool. Pentru fiecare element x din lista xs, se verifică dacă x nu este divizibil cu 3 (x mod 3 > 0).
+
+foldr (&&) True: Aceasta aplică operatorul && (și logic) pe toate elementele listei generate de list comprehension, pornind de la dreapta spre stânga, cu valoarea inițială True.
+
+foldr (&&) True [x mod 3 > 0 | x <- xs] va returna True dacă toate elementele din lista [x mod 3 > 0 | x <- xs] sunt True. Aceasta înseamnă că niciun element din lista xs nu este divizibil cu 3.
+
+Dacă există cel puțin un element în lista xs care este divizibil cu 3, atunci lista [x mod 3 > 0 | x <- xs] va conține cel puțin un False, iar foldr (&&) True va returna False.
+
+8.În tipul algebric de date data Arb a = Frunza | Nod a (Arb a) (Arb a) care sunt constructorii de date?
+
+Raspuns: b) Frunza, Nod
+În tipul algebric de date data Arb a = Frunza | Nod a (Arb a) (Arb a), constructorii de date sunt cei care creează valori de tipul Arb a. Aceștia sunt Frunza și Nod.
+
+data Arb a = Frunza | Nod a (Arb a) (Arb a) definește un tip de date algebric parametric Arb a.
+Frunza este un constructor fără argumente, care reprezintă o frunză.
+Nod este un constructor cu trei argumente: un element de tip a și doi subarbori de tip Arb a.
+
+Frunza și Nod sunt constructorii de date care creează valori de tip Arb a.
+Arb este numele tipului de date, nu un constructor.
+A4 nu are nicio legătură cu definiția tipului de date.
+
+9.Fie l1 = [2,4..], l2 = ['a','b'..], l3 = zip l1 l2, x = head . tail l3. Ce valoare are x?
+
+Raspuns: c) (4, 'b')
+l3 = zip l1 l2: Aceasta este o listă de tupluri, obținută prin combinarea elementelor din l1 și l2:
+l3 = [(2, 'a'), (4, 'b'), (6, 'c'), (8, 'd'), ...]
+
+x = head . tail $ l3: Aceasta aplică funcția head pe rezultatul funcției tail aplicată pe l3:
+	tail l3 elimină primul element din l3, rezultând [(4, 'b'), (6, 'c'), (8, 'd'), ...].
+	head (tail l3) ia primul element din lista rezultată, adică (4, 'b').
+Valoarea lui x este (4, 'b').
+
+10.Care operație de mai jos produce rezultatul [10,11,12,13]?
+
+Raspuns: c) map id [10,11,12,13]:
+map (+1) [10,11,12,13]:
+map (+1) aplică funcția (+1) fiecărui element din listă.
+Rezultatul va fi [11,12,13,14], deoarece fiecare element este incrementat cu 1.
+
+map 0 [10,11,12,13]:
+map 0 nu este o operație validă, deoarece 0 nu este o funcție. map așteaptă o funcție ca prim argument.
+
+map id [10,11,12,13]:
+map id aplică funcția id (identitatea) fiecărui element din listă.
+Funcția id returnează elementul său de intrare fără modificări.
+Rezultatul va fi [10,11,12,13], deoarece fiecare element rămâne neschimbat.
+
+11.Fie l1 = ['a','b'..], l2 = [2,4..], l3 = take 3 $ zip l1 l2. Cu ce operație puteți obține din aceste liste valoarea ('b',4)?
+
+Raspuns: d) l3[1]:
+l3 = take 3 $ zip l1 l2 = [( 'a', 2), ('b', 4), ('c', 6)].
+
+l1 ++ l2:
+l1 ++ l2 concatenează listele l1 și l2, dar nu produce un tuplu ('b', 4).
+
+l3.1:
+l3.1 nu este o sintaxă validă în Haskell.
+
+l3[1]:
+l3[1] accesează al doilea element din lista l3, care este ('b', 4).
+
+12.Ce eroare este în codul de mai jos?
+      h x = x + g
+      where g x = x + 1
+
+Raspuns: d)indentarea este greșită
+Cod corectat:
+h x = x + g
+  where
+    g x = x + 1
+
+13.Ce tip are map (: ["a","b","c"])?
+
+Raspuns: c) [[Char]] -> [[[Char]]]
+
+map are tipul (a -> b) -> [a] -> [b].
+(:) este operatorul de cons (construcție de liste) și are tipul a -> [a] -> [a].
+["a","b","c"] este de tip [String] sau [[Char]].
+(: ["a","b","c"]) este o funcție care primește un element de tip String și returnează o listă de liste de caractere [[Char]].
+Tipul lui (: ["a","b","c"]) este String -> [[Char]].
+map (: ["a","b","c"]) aplică funcția (: ["a","b","c"]) fiecărui element dintr-o listă de tip [String].
+Rezultatul va fi o listă de liste de liste de caractere [[[Char]]]
+map (: ["a","b","c"]) ["x", "y", "z"] --[["x","a","b","c"], ["y","a","b","c"], ["z","a","b","c"]]
+
+14.Care din următoarele instrucțiuni este o funcție anonimă?
+
+Raspuns: a) \x . x ^ 2
+a) \x . x ^ 2:
+Aceasta este o funcție anonimă care primește un argument x și returnează x la puterea a doua.
+Sintaxa corectă în Haskell este \x -> x ^ 2.
+
+c) \x, y -> (x + y)^2:
+Aceasta nu este o sintaxă corectă pentru o funcție anonimă în Haskell.
+Sintaxa corectă ar fi \x y -> (x + y)^2.
+
+d) f x = x * 3:
+Aceasta este o definiție de funcție numită, nu o funcție anonimă.
+
+15. Care din următoarele instrucțiuni o să întoarcă un rezultat?
+
+Rezultat: d) nicio variantă
+a) take 3 $ foldr (^) 2 [1..]:
+foldr (^) 2 [1..] aplică operatorul ^ (exponențiere) folosind foldr pe lista infinită [1..] cu valoarea inițială 2.
+foldr (^) 2 [1..] va încerca să evalueze expresia 1 ^ (2 ^ (3 ^ (4 ^ ...))), ceea ce va duce la o evaluare infinită și nu va termina niciodată.
+take 3 nu va putea prelua primele 3 elemente deoarece foldr (^) 2 [1..] nu va termina.
+
+b) take 3 . foldr (^) 2 [1..]:
+Aceasta este aceeași operație ca în varianta a), deci nu va termina niciodată.
+
+c) take 3 . foldl (^) 2 [1..]:
+Aceasta este aceeași operație ca în varianta a), deci nu va termina niciodată.
+
+16.Care din urmatoarele instructiuni este o functie anonima?
+
+Raspuns: d. \x -> x^2:
+
+a. \x y -> return x - y:
+Aceasta este aproape corectă, dar return nu este necesar în acest context și x - y ar trebui să fie în paranteze pentru a fi corectă.
+Corect ar fi \x y -> x - y.
+
+b. \x . x+1:
+Aceasta este aproape corectă, dar punctul . ar trebui să fie o săgeată ->.
+Corect ar fi \x -> x + 1.
+
+c.. \x -> x+1 ; x+2:
+Aceasta nu este corectă, deoarece ; nu este folosit pentru a separa expresii în Haskell.
+Corect ar fi \x -> (x + 1, x + 2) dacă dorim să returnăm un tuplu.
+
+17.Ce tip are map (++ "hello")?
+
+Raspuns:b. [[Char]] -> [[Char]]
+(++) este operatorul de concatenare a listelor și are tipul [a] -> [a] -> [a].
+(++ "hello") este o funcție parțial aplicată care primește o listă de caractere (String) și returnează o altă listă de caractere (String) cu "hello" concatenat la sfârșit.
+(++ "hello") are tipul String -> String
+map (++ "hello") aplică funcția (++ "hello") fiecărui element dintr-o listă de String.
+map (++ "hello") are tipul [String] -> [String] sau [[Char]] -> [[Char]]
+ map (++ "hello") ["Hi", "Bye", "See you"] --["Hihello", "Byehello", "See youhello"]
+
+18.Ce valoare are f [1..7] daca f este 
+f[]=f[] f [x] = [x] f l1 = let x:y:z = l1 in x + y : f z 
+
+Raspuns:a) [3,7,11,7]
+f [] = f []: Aceasta este o definiție recursivă incorectă pentru cazul listei goale. Ar trebui să fie f [] = []
+f [x] = [x]: Dacă lista are un singur element, returnează lista cu acel element.
+f l1 = let x:y:z = l1 in x + y : f z: Dacă lista are cel puțin două elemente, descompune lista în x, y, și z:x este primul element,y este al doilea element,z este restul listei.Returnează x + y concatenat cu rezultatul apelului recursiv f z.
+
+19.Ce tip are map (x -> elem x "aeiou")?
+
+Raspuns: c. [Char] -> [Bool]
+elem x "aeiou" verifică dacă x este un element în lista "aeiou"
+x trebuie să fie de tip Char pentru a putea fi comparat cu elementele din "aeiou"
+elem x "aeiou" returnează un Bool
+(x -> elem x "aeiou") are tipul Char -> Bool.
+map (\x -> elem x "aeiou") "hello" -- [False, True, False, False, True]
+
+20.Ce valoare are x, daca l1 = [2.6..] l2 = [10,20..] l3 = zip l1 l2 x= head $ tail 13
+
+Raspuns: d. (6, 20)
+
+21.Care din urmatoarele instructiuni o sa intoarca un raspuns?
+
+Raspuns:  c. take 5 $ foldr (:) [] [1..]
+
+b. take 5 . foldl flip (:) [] [1..]:
+take 5 . foldl flip (:) [] [1..] este echivalent cu take 5 (foldl flip (:) [] [1..]).
+foldl flip (:) [] [1..] aplică flip (:) folosind foldl pe lista [1..] cu valoarea inițială [].
+flip (:) este o funcție care adaugă elementele la sfârșitul listei, dar foldl va încerca să evalueze întreaga listă infinită înainte de a returna un rezultat.
+Aceasta nu va întoarce un răspuns deoarece evaluarea nu va termina.
+
+c. take 5 $ foldr (:) [] [1..]:
+foldr (:) [] [1..] reconstruiește lista [1..] folosind foldr și operatorul de cons (:).
+take 5 $ foldr (:) [] [1..] va prelua primele 5 elemente din lista [1..], adică [1, 2, 3, 4, 5].
+Aceasta va întoarce un răspuns.
+
+d. take 5 $ foldl flip (:) [] [1..]:
+foldl flip (:) [] [1..] aplică flip (:) folosind foldl pe lista [1..] cu valoarea inițială [].
+flip (:) este o funcție care adaugă elementele la sfârșitul listei, dar foldl va încerca să evalueze întreaga listă infinită înainte de a returna un rezultat.
+Aceasta nu va întoarce un răspuns deoarece evaluarea nu va termina.
+
+22.Fie functia f 
+			f_0=[] 
+			f n x=n : f n(x-1) Rezultatul functiei f 4 2 este:
+
+Raspuns:c. [4,4]
+
+23.Care din tipurile de date de mai jos este un tip suma?
+
+Raspuns: c. data Colors = Blue | Green | Red
+
+a. data Colors = C Blue Green Red:
+Aceasta nu este corectă, deoarece C Blue Green Red nu definește un tip sumă. Pare să fie o încercare de a defini un tip produs, dar nu este corectă.
+
+b. data Colors = C1 Blue | C2 Green | C3 Red:
+Aceasta nu este corectă, deoarece Blue, Green și Red nu sunt definite ca tipuri sau valori. Constructorii C1, C2 și C3 ar trebui să fie urmate de tipuri sau valori.
+
+c. data Colors = Blue | Green | Red:
+Aceasta este corectă. Colors este un tip sumă cu trei variante: Blue, Green și Red.
+
+d. data Colors = Blue + Green + Red:
+Aceasta nu este corectă, deoarece + nu este folosit pentru a defini tipuri sumă în Haskell.
+
+24.Ce returneaza instructiunea filter (+1) [1.2.3]?
+
+Raspuns: d. Instructiune invalida
+
+25. Ce calculeaza functia f xs = foldr (+) 0 [x `mod` 2 | x <- xs]?
+
+Raspuns: c. numarul elementelor impare din lista
+[x 'mod 2 | x <- xs]: Aceasta este o list comprehension care generează o listă de resturi ale împărțirii fiecărui element x din lista xs la 2.
+x 'mod 2 va fi 0 dacă x este par și 1 dacă x este impar.
+foldr (+) 0: Aceasta aplică operatorul + (adunare) pe toate elementele listei generate de list comprehension, pornind de la dreapta spre stânga, cu valoarea inițială 0.
+
+26.Daca functia f are tipul Char -> String si functia g are tipul String -> [String], ce tip are g. f?
+
+Raspuns: d. Char -> [String]
+
+27.Ce valoare are f 5 unde 
+	f X = X + Y 
+	     where Y = X +1
+
+Raspuns: c) 11
+
+28.Care din instructiunile de mai jos o sa produca valoarea False? 
+a. foldr (||) True [1>2, 3>2, 5==5] 
+b. niciunul din raspunsuri 
+c. foldr (&&) True [1>2, 3>2,5==5] 
+d. foldr (||) False [1>2, 3>2, 5==5]
+
+Raspuns: c. foldr (&&) True [1>2, 3>2,5==5] 
+
+29.Care din tipurile de date de mai jos este un tip produs? 
+a. data Country = Country Name x Capital 
+b. data Country = Country Name Capital 
+c. data Country = Name x Capital 
+d. data Country = Name | Capital
+
+Raspuns: b
+
+a. data Country = Country Name x Capital:
+Aceasta nu este corectă, deoarece x nu este un operator valid în Haskell pentru definirea unui tip produs. Ar trebui să fie un spațiu între Name și Capital.
+
+b. data Country = Country Name Capital:
+Aceasta este corectă. Country este un tip produs cu un constructor Country care combină două valori: Name și Capital.
+
+c. data Country = Name x Capital:
+Aceasta nu este corectă, deoarece Name x Capital nu este un constructor valid și nu urmează sintaxa corectă pentru definirea unui tip de date algebric în Haskell.
+
+d. data Country = Name | Capital:
+Aceasta definește un tip sumă, nu un tip produs. Country poate fi fie Name, fie Capital.
+
+30.Fie functia f x y= z + (if x < y then 0 else x - y) 
+Ce valoare f 7 3 1?
+
+d.Eroare 
+z nu este definit
+
+31.Ce valoare are x daca l1 = [0.0.5..] 
+l2 = [1.5..] 
+x = head zip l1 l2
+
+Raspuns: c Eroare
+head zip l1 l2 nu este o sintaxă validă. Corect ar fi head (zip l1 l2)
+
+32.Ce valoare are g 5 daca g y = let f y = y + 1 in f y
+
+Raspuns: c.6
+
+33.Cum se apeleaza o functie cu prototipul f (Int -> Bool) -> Bool -> Int-> Bool
+
+Raspuns: b. f p True 5, unde p :: int -> Bool
+
+34.Considerati tipurile algebrice de date: 
+data Price = Price Integer 
+data Airline = PapuAir | Catapults | Take YourChancesUnited 
+data Manufacturer = Mini | Mazda | Tata 
+data Vehicle = Car Manufacturer Price | Plane Airline 
+Ce tip are Car Mini? Dar Price 10?
+
+Raspuns: Price -> Vehicle si Price
+Price este un tip de date care conține un singur constructor Price cu un argument de tip Integer.
+Airline este un tip de date sumă cu trei variante: PapuAir, Catapults, și TakeYourChancesUnited.
+Manufacturer este un tip de date sumă cu trei variante: Mini, Mazda, și Tata.
+Vehicle este un tip de date sumă cu două variante:
+Car Manufacturer Price: Reprezintă un vehicul de tip mașină, care are un constructor Car ce primește un Manufacturer și un Price.
+Plane Airline: Reprezintă un vehicul de tip avion, care are un constructor Plane ce primește un Airline.
+Car Mini este o expresie care folosește constructorul Car cu argumentul Mini.
+Constructorul Car are tipul Manufacturer -> Price -> Vehicle.
+Mini este de tip Manufacturer.
+
+35.Ce se obtine dupa instructiunea (3^) 2?
+
+Raspuns: a. 9
+
+36.Ce se obtine dupa instructiunea map (\x -> if x == 'c' then '*' else (x)) "abcdc"?
+
+Raspuns : c. "ab*d*"
+
+37.Care este tipul functiei f x y z = if x && y then z else not z ?
+
+Raspuns: b. f :: Bool -> Bool -> Bool -> Bool
+
+38.Care functie de mai jos este un predicat? 
+a. \x -> x ++ "world!" 
+b. \x y -> True 
+c. \x y -> if x `rem` y == 0 then x else y 
+d. \x -> x+10
+
+Raspuns: b. \x y -> True deoarece un predicat intoarce o valoare Boolean
