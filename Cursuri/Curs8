@@ -1,0 +1,247 @@
+Trimiterea De Mail-uri:
+SMTP
+SMTP (Simple Mail Transfer Protocol) este un protocol standard de comunicare ,bazat pe text care funcționează folosind comenzi și răspunsuri. 
+Este responsabil de trimiterea e-mailurilor de la un client (cum ar fi un client de e-mail sau o aplicație web) la un server de e-mail și între serverele de e-mail. 
+
+TLS:
+Este succesorul SSL-ului si asigura securitatea comunicarii intre doua entitati in retea
+
+Settings.py:
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' --metoda folosită pentru trimiterea mailurilor 
+EMAIL_HOST = 'smtp.gmail.com' -- serverul SMTP
+EMAIL_PORT = 587 -- portul folosit pentru trimiterea mailurilor
+EMAIL_USE_TLS = True -- Activarea/dezactivarea TLS pentru conexiuni securizate
+EMAIL_HOST_USER = 'test.tweb.node@gmail.com' -- Adresa de email de la care trimitem mesajul
+EMAIL_HOST_PASSWORD = 'xdqswyrleddghrgm' -- Parola sau tokenul aplicației
+DEFAULT_FROM_EMAIL = 'Da-Boss <test.tweb.node@gmail.com>' -- Adresa implicită pentru câmpul "From" (din e-mail)
+
+Alte tipuri de backends:
+Daca vrem ca emailurile sa nu fie trimise si doar salvate intr-o consola:
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+Daca vrem sa salvam intr-un fisier:
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/folder/emailuri 
+Daca vrem sa salvam in memorie:
+EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+Un backend care nu face nimic cu mailurile:
+EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
+
+Functia send_mail
+send_mail(subject, message, from_email, recipient_list, fail_silently=False, auth_user=None, auth_password=None, connection=None, html_message=None)
+
+Parametri obligatorii:
+subject (string): Subiectul e-mailului.
+message (string): Conținutul principal al e-mailului (doar text simplu).
+from_email (string): Adresa expeditorului.
+recipient_list (listă de stringuri): Lista de adrese ale destinatarilor. Exemplu: ["destinatar1@gmail.com", "destinatar2@gmail.com"].
+
+Parametrii opționali:
+fail_silently (boolean, implicit False): Dacă este setat la True, erorile apărute în timpul trimiterii e-mailului sunt ignorate. Recomandat pentru medii de producție.
+auth_user (string): Numele utilizatorului pentru autentificare la serverul SMTP. Dacă este omis, se folosește valoarea din EMAIL_HOST_USER din settings.py.
+auth_password (string): Parola utilizată pentru autentificare la serverul SMTP. Dacă este omisă, se folosește valoarea din EMAIL_HOST_PASSWORD din settings.py.
+connection (EmailBackend): Obiectul de conexiune folosit pentru trimiterea e-mailului. Dacă este omis, se utilizează conexiunea implicită.
+html_message (string): Mesajul în format HTML care va fi inclus în e-mail. Dacă este specificat, e-mailul va avea atât un conținut text simplu (din message), cât și un conținut HTML.
+
+views.py
+from django.core.mail import send_mail
+def trimite_email():
+    send_mail(
+        subject='Salutare!',
+        message='Salut. Ce mai faci?',
+        html_message='<h1>Salut</h1><p>Ce mai faci?</p>',
+        from_email='adresa_email@gmail.com',
+        recipient_list=['destinatar@gmail.com'],
+        fail_silently=False,
+    )
+
+Când folosim send_mail() 
+-trimitem emailuri simple precum notificarile
+-nu suporta atasamente si nu permite configurarea detaliata a anteturilor
+
+Functia send_mass_mail
+Funcția send_mass_mail(), definită în modulul django.core.mail, este utilizată pentru a trimite mai multe e-mailuri simultan, cu eficiență sporită. 
+Aceasta este potrivită atunci când trebuie expediat un set de mesaje diferite către destinatari diferiți, folosind o singură conexiune SMTP.
+
+send_mass_mail(datatuple, fail_silently=False, connection=None)
+1. datatuple: 	O listă de tupluri, unde fiecare tuplu definește un e-mail individual. Fiecare tuplu trebuie să aibă următoarea structură:
+(subject, message, from_email, recipient_list)
+2.fail_silently (opțional, implicit False):Dacă este setat la True, ignoră erorile care apar în timpul trimiterii mesajelor. 
+Dacă este setat la False, erorile vor fi raportate.
+3.connection (opțional): Un obiect de tip EmailBackend utilizat pentru a trimite e-mailurile. 
+Dacă nu este specificat, se folosește conexiunea implicită definită în setările Django.
+from django.core.mail import send_mass_mail
+def trimite_mail():
+    datatuple = [
+        ("Subiect 1", "Mesaj 1.", "expeditor@gmail.com", ["dest1@gmail.com", "dest2@gmail.com"]),
+        ("Subiect 2", "Mesaj 2.", "expeditor@gmail.com", ["dest3@gmail.com", "dest4@gmail.com"]),
+    ]   
+    send_mass_mail(datatuple, fail_silently=False)
+
+Funcția mail_admins()
+Funcția mail_admins este o metodă convenabilă pentru a trimite e-mailuri către administratorii site-ului (specificați în setările proiectului) atunci când apar 
+evenimente critice, cum ar fi erori sau alte probleme grave. Este utilă în special pentru monitorizarea aplicației și notificarea administratorilor despre probleme în timp real.
+
+mail_admins(subject, message, fail_silently=False, connection=None, html_message=None)
+In settings.py, trebuie definită lista administratorilor care vor primi notificări. Lista e dată sub formă de tupluri. Fiecare tuplu conține:
+Numele administratorului (opțional).
+Adresa de e-mail a administratorului.
+ADMINS = [
+    ('Admin1', 'admin1@gmail.com'),
+    ('Admin2', 'admin2@gmail.com'),]
+
+views.py
+from django.core.mail import mail_admins
+
+def afiseaza_pagina(request):
+    try:
+        raise ValueError("Eroare!!!")
+    except Exception as e:
+        mail_admins(
+            subject='Eroare in afisarea paginii',
+            message=f'O eroare: {e}',
+            html_message=f'<p><strong>Eroare!!!</strong> O eroare: {e}</p>',
+            fail_silently=False
+        )
+        return HttpResponse("Eroare trimisa administratorilor.")
+
+Logging:
+Logging-ul este un sistem integrat care permite înregistrarea evenimentelor în aplicație. Acest sistem este configurabil și permite dezvoltatorilor să monitorizeze
+activitatea aplicației, să diagnosticheze problemele și să păstreze înregistrări pentru analiza ulterioară. 
+Django utilizează modulul standard Python logging, oferind în același timp un mecanism simplu de configurare prin intermediul fișierului settings.py
+
+Scenarii practice:
+1.Depanare în timpul dezvoltării: Mesaje de tip DEBUG pentru a urmări fluxurile logice și variabilele.
+2.Monitorizarea aplicației: Mesaje de tip INFO pentru a urmări activitățile de bază, cum ar fi logările utilizatorilor.	
+3.Gestionarea problemelor: Mesaje de tip WARNING și ERROR pentru a înregistra problemele apărute în funcționarea aplicației.
+4.Alarme critice: Mesaje de tip CRITICAL pentru erori care necesită intervenție imediată, cum ar fi o bază de date inaccesibilă.
+
+LOGGING = {
+    'version': 1, --versiunea configuratiei
+    'disable_existing_loggers': False, -- daca loggarile existente ar trebui dezactivate
+    'formatters': { --controleaza modul in care mesajele de logare sunt afisate
+        'verbose': { --formatul afiseaza mesajele detaliate
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        }, --afiseaza nivelul logarii(Debug,Info etc.),timpul exact al logarii,numele modulului din care provine mesajul si mesajul
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': { --definirea locului unde vor fi trimise mesajele de logare
+        'console': { --trimite mesajele in consola
+            'level': 'DEBUG', --acest handler va procesa toate mesajele de nivel DEBUG si mai sus
+            'class': 'logging.StreamHandler', --trimite mesajele intr-o consola
+            'formatter': 'verbose', --sunt formatate folosind formatul vervose
+        },
+        'file': { --trimite intr-un fisier
+            'level': 'ERROR', --va inregistra doar mesajele de nivel ERROR si mai sus
+            'class': 'logging.FileHandler', --acest handler este folosit pentru a scrie in fisier
+            'filename': 'errors.log', --fisierul unde vor fi scrise mesajele
+            'formatter': 'simple',
+        },
+    },
+    'loggers': { --cine trimite mesajele de logare si care handleri sunt folositi
+        'django': { --loggerul django gestioneaza logarea in cadrul aplicatiei django
+            'handlers': ['console', 'file'], --mesajele vor fi trimise atat in fiseier cat si in consola
+            'level': 'DEBUG', --va inregistra toate mesajele de nivel Debug si mai sus
+            'propagate': True, --mesajele vor fi trimise si catre alte loggere daca exista
+        },
+    },
+}
+
+Setari de logging personalizat pentru o aplicatie
+'loggers': {
+        'aplicatie_exemplu': { --dpar mesajele din aplicatia aplicatie_exemplu vor fi afisate in consola
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+
+Utilizarea logging-ului in cod
+Pentru a genera mesaje de logare în cod, trebuie să creăm un logger folosind logging.getLogger()
+views.py
+import logging
+logger = logging.getLogger('django')
+def afisare_pagina(request):
+    logger.debug('Acesta este un mesaj de debug.')
+    logger.info('Acesta este un mesaj informativ.')
+    logger.warning('Acesta este un avertisment.')
+    logger.error('Acesta este un mesaj de eroare.')
+    logger.critical('Acesta este un mesaj critic.')
+
+Clasa EmailMessage
+Clasa EmailMessage, definită în modulul django.core.mail, oferă o metodă flexibilă și avansată pentru a compune și a trimite e-mailuri. 
+Aceasta este utilă atunci când aveți nevoie de control suplimentar asupra structurii unui mesaj, cum ar fi adăugarea de atașamente, utilizarea conținutului HTML, 
+specificarea anteturilor personalizate și trimiterea către mai mulți destinatari.
+
+from django.core.mail import EmailMessage
+def trimite_mail():
+    email = EmailMessage(
+        subject='Email', --subiectul
+        body='Salut, ce mai faceti?', --continutul mesajului
+        from_email='noreply@example.com', --adresa de email a destinatarului
+        to=['destinatar_principal@example.com'], -- liste adreselor de email
+        cc=['destinatar_cc@example.com'], --listele de adrese de email care sunt vizibili tuturor
+        bcc=['destinatar_bcc@example.com'], --listele de adrese de email ale destinatarilor care nu o sa vizbile pentru ceilalti  
+        reply_to=[adresa_raspuns@example.com'] --daca cineva raspunde la email raspunsul va fi trimis la aceste adrese
+    )
+    email.send()
+Putem sa mai avem in EmailMessage
+attachments (listă): O listă de atașamente care vor fi incluse în e-mail. Fiecare atașament poate fi ori calea unui fișier, ori un tuplu de tipul (nume_fișier, conținut, tip_mime).
+headers (dicționar): Dictionar de anteturi personalizate pentru mesaj. Exemplu: {'X-Custom-Header': 'Valoare'}.
+connection (EmailBackend):	Conexiunea utilizată pentru trimiterea e-mailului. Dacă este omis, se folosește conexiunea implicită din EMAIL_BACKEND
+
+Metodele unui obiect EmailMessage
+from django.core.mail import EmailMessage
+
+def trimite_mail_atasament(cale):
+    email = EmailMessage(
+        subject='Email cu atașament',
+        body='Vezi atașamentul inclus în acest mesaj.',
+        from_email='expeditor@gmail.com',
+        to=['destinatar@gmail.com'],
+    )
+    email.attach_file(cale)
+    email.send() 
+1.send(fail_silently=False). Trimite e-mailul. Parametrul fail_silently indică dacă erorile ar trebui să fie ignorate (True) sau afișate (False).
+2.attach(filename, content, mimetype=None). Adaugă un atașament personalizat la e-mail. Exemplu: email.attach('factura.pdf', continut, 'application/pdf')
+3.attach_file(path, mimetype=None). Adaugă un atașament direct de pe disc.	Exemplu: email.attach_file('/cale/catre/factura.pdf')
+4.get_connection(). Returnează conexiunea utilizată pentru trimiterea e-mailului.
+5.message(). Returnează un obiect MIMEMessage care reprezintă structura e-mailului.
+6.recipients(). Returnează o listă completă a destinatarilor (inclusiv to, cc și bcc).
+
+Template pentru emailuri
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Template</title>
+</head>
+<body>
+    <h1>Bună, {{ nume }}!</h1>
+    <p>Nu am inspiratie pentru continutul acestui e-mail.</p>
+</body>
+</html>
+
+Folosirea template-ului de pe email
+In forms.py
+rom django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+
+def trimite_mail():
+    context = {'nume': 'Ionel'}  
+    html_content = render_to_string('email_template.html', context)
+
+    email = EmailMessage(
+        subject='Salutare!',
+        body=html_content,
+        from_email='expeditor@gmail.com',
+        to=['destinatar@gmail.com'],
+    )
+    email.content_subtype = 'html'
+    email.send(fail_silently=False)
+
+In CustomUserCreationForm vom adauga in if commit inainte de user.save()
+trimite_mail()
+
