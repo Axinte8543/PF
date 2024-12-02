@@ -1,0 +1,224 @@
+ADT. Clase de tipuri
+
+Clasa Collection
+
+class Collection c where
+  empty :: c key value
+  singleton :: key -> value -> c key value 
+  insert
+      :: Ord key
+      => key -> value -> c key value -> c key value
+  lookup :: Ord key => key -> c key value -> Maybe value
+  delete :: Ord key => key -> c key value -> c key value
+  keys :: c key value -> [key]
+  values :: c key value -> [value]
+  toList :: c key value -> [(key, value)]
+  fromList :: Ord key => [(key,value)] -> c key value
+
+1.Adaugati definitii implicite (folosind celelalte functii din clasa) pentru keys, values si fromList.
+keys c = map fst (toList c) --foloseste functia toList pentru a obtine o lista de perechi (key,value), foloseste map fst pentru a extrage cheile
+values c = map snd (toList c) --face aceeasi chestie ca la keys
+fromList = foldr (uncurry insert) empty 
+--foloseste foldr pentru a insera fiecare pereche din lista data in colectia goala empty si uncurry insert pentru a aplica functia insert pe fiecare pereche
+
+2.Fie tipul listelor de perechi cheie-valoare:
+newtype PairList k v
+  = PairList { getPairList :: [(k, v)] }
+Faceti PairList instanta a clasei Collection.
+
+instance Collection PairList where
+  empty = PairList []
+  singleton key value = PairList [(key, value)]
+  insert key value (PairList xs) = PairList ((key, value) : filter ((/= key) . fst) xs)
+  lookup key (PairList xs) = lookup key xs
+  delete key (PairList xs) = PairList (filter ((/= key) . fst) xs)
+  keys (PairList xs) = map fst xs
+  values (PairList xs) = map snd xs
+  toList (PairList xs) = xs
+  fromList = PairList
+
+ let pl = fromList [(1, "one"), (2, "two"), (3, "three")] :: PairList Int String
+  print $ toList pl  -- [(1, "one"), (2, "two"), (3, "three")]
+  print $ keys pl  -- [1, 2, 3]
+  print $ values pl  -- ["one", "two", "three"]
+  print $ Collection.lookup 2 pl  -- Just "two"
+  let pl' = insert 4 "four" pl
+  print $ toList pl'  -- [(4, "four"), (1, "one"), (2, "two"), (3, "three")]
+  let pl'' = delete 2 pl'
+  print $ toList pl''  -- [(4, "four"), (1, "one"), (3, "three")]
+
+3. Amintiti-va exercitiul din laboratorul trecut în care ati definit tipul arborilor de cautare cu noduri constând în perechi chei-valoare cu chei numere întregi. 
+Vom generaliza acest tip definind arbori binari de cautare (ne-echilibrati) cu chei de tip oarecare:
+
+data SearchTree key value
+  = Empty
+  | BNode
+      (SearchTree key value) -- elemente cu cheia mai mica
+      key -- cheia elementului
+      (Maybe value) -- valoarea elementului
+      (SearchTree key value) -- elemente cu cheia mai mare
+
+Observati ca tipul valorilor este Maybe value. Alegerea a fost facuta pentru a reduce timpul operatiei de stergere prin simpla marcare a unui nod ca fiind sters. 
+Un nod sters va avea valoarea Nothing.
+Faceti SearchTree instanta a clasei Collection.
+
+class Collection c where
+  empty :: c key value
+  singleton :: key -> value -> c key value
+  insert :: Ord key => key -> value -> c key value -> c key value
+  lookup :: Ord key => key -> c key value -> Maybe value
+  delete :: Ord key => key -> c key value -> c key value
+  keys :: c key value -> [key]
+  values :: c key value -> [value]
+  toList :: c key value -> [(key, value)]
+  fromList :: Ord key => [(key, value)] -> c key value
+
+data SearchTree key value
+  = Empty
+  | BNode
+      (SearchTree key value) -- elemente cu cheia mai mica
+      key                    -- cheia elementului
+      (Maybe value)          -- valoarea elementului
+      (SearchTree key value) -- elemente cu cheia mai mare
+  deriving (Show, Eq)
+
+instance Collection SearchTree where
+  empty = Empty
+
+  singleton key value = BNode Empty key (Just value) Empty
+
+  insert key value Empty = BNode Empty key (Just value) Empty
+  insert key value (BNode left k v right)
+    | key == k  = BNode left k (Just value) right
+    | key < k   = BNode (insert key value left) k v right
+    | otherwise = BNode left k v (insert key value right)
+
+  lookup _ Empty = Nothing
+  lookup key (BNode left k v right)
+    | key == k  = v
+    | key < k   = lookup key left
+    | otherwise = lookup key right
+
+  delete _ Empty = Empty
+  delete key (BNode left k v right)
+    | key == k  = BNode left k Nothing right
+    | key < k   = BNode (delete key left) k v right
+    | otherwise = BNode left k v (delete key right)
+
+  keys Empty = []
+  keys (BNode left k _ right) = keys left ++ [k] ++ keys right
+
+  values Empty = []
+  values (BNode left _ Nothing right) = values left ++ values right
+  values (BNode left _ (Just val) right) = values left ++ [val] ++ values right
+
+  toList Empty = []
+  toList (BNode left k Nothing right) = toList left ++ toList right
+  toList (BNode left k (Just val) right) = toList left ++ [(k, val)] ++ toList right
+
+  fromList = foldr (uncurry insert) Empty
+
+main :: IO ()
+main = do
+  let tree = fromList [(3, "three"), (1, "one"), (4, "four"), (2, "two")] :: SearchTree Int String
+  print $ toList tree  -- [(1,"one"),(2,"two"),(3,"three"),(4,"four")]
+  print $ keys tree  -- [1,2,3,4]
+  print $ values tree  -- ["one","two","three","four"]
+  print $ Collection.lookup 2 tree  -- Just "two"
+  let tree' = insert 5 "five" tree
+  print $ toList tree'  -- [(1,"one"),(2,"two"),(3,"three"),(4,"four"),(5,"five")]
+  let tree'' = delete 3 tree'
+  print $ toList tree''  -- [(1,"one"),(2,"two"),(3,Nothing),(4,"four"),(5,"five")]
+
+
+4.Se dau doua tipuri de date ce reprezinta puncte cu numar variabil de coordonate întregi si arbori cu informatie salvata în frunze, si o clasa de tipuri ToFromArb.
+
+data Punct = Pt [Int] 
+data Arb = Vid | F Int | N Arb Arb
+          deriving Show 
+
+class ToFromArb a where 
+      toArb :: a -> Arb 
+      fromArb :: Arb -> a  
+
+Scrieti o instanta a clasei Show pentru tipul de date Punct, astfel încât lista coordonatelor sa fie afisata ca tuplu. 
+-- Pt [1,2,3] 
+-- (1, 2, 3) 
+-- Pt [] 
+-- ()
+
+Rezolvare:
+data Punct = Pt [Int]
+  deriving (Eq)
+
+instance Show Punct where
+  show (Pt coords) = showTuple coords
+    where
+      showTuple [] = "()"
+      showTuple [x] = "(" ++ show x ++ ")"
+      showTuple (x:xs) = "(" ++ show x ++ concatMap (", " ++) (map show xs) ++ ")"
+
+5.Scrieti o instanta a clasei ToFromArb pentru tipul de date Punct astfel încât lista coordonatelor punctului sa coincida cu frontiera arborelui. 
+-- toArb (Pt [1,2,3]) 
+-- N (F 1) (N (F 2) (N (F 3) Vid)) 
+-- fromArb $ N (F 1) (N (F 2) (N (F 3) Vid)) :: Punct 
+-- (1,2,3)
+
+data Punct = Pt [Int]
+  deriving (Show, Eq)
+
+data Arb = Vid | F Int | N Arb Arb
+  deriving (Show, Eq)
+
+class ToFromArb a where
+  toArb :: a -> Arb
+  fromArb :: Arb -> a
+
+instance ToFromArb Punct where
+  toArb (Pt []) = Vid
+  toArb (Pt [x]) = F x
+  toArb (Pt (x:xs)) = N (F x) (toArb (Pt xs))
+
+  fromArb Vid = Pt []
+  fromArb (F x) = Pt [x]
+  fromArb (N left right) = Pt (leftList ++ rightList)
+    where
+      Pt leftList = fromArb left
+      Pt rightList = fromArb right
+
+6.Figuri geometrice 
+Se dau urmatorul tip de date reprezentând figuri geometrice
+
+data Geo a = Square a | Rectangle a a | Circle a 
+    deriving Show 
+si clasa GeoOps în care se definesc operatiile perimeter si area:
+
+class GeoOps g where 
+  perimeter :: (Floating a) => g a -> a 
+  area :: (Floating a) => g a -> a
+
+Instantiati clasa GeoOps pentru tipul de date Geo. Hint: pentru valoarea pi puteti folosi functia cu acelasi nume (pi).
+-- ghci> pi -- 3.141592653589793
+
+instance GeoOps Geo where
+  perimeter (Square a) = 4 * a
+  perimeter (Rectangle a b) = 2 * (a + b)
+  perimeter (Circle r) = 2 * pi * r
+
+  area (Square a) = a * a
+  area (Rectangle a b) = a * b
+  area (Circle r) = pi * r * r
+
+  let square = Square 4
+  let rectangle = Rectangle 3 5
+  let circle = Circle 2.5
+
+  print $ perimeter square    -- 16.0
+  print $ area square         -- 16.0
+
+7. Instantiati clasa Eq pentru tipul de date Geo, astfel încât doua figuri geometrice sa fie egale daca au perimetrul egal.
+
+instance (Floating a, Eq a) => Eq (Geo a) where
+  g1 == g2 = perimeter g1 == perimeter g2
+
+print $ square == rectangle --True daca perimetrul patratului este egal cu cel al dreptunghiului
