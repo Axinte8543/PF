@@ -1,0 +1,76 @@
+Monade
+
+putChar :: Char -> IO ()
+putChar '!' --va fi afisat semnul exclamarii
+
+O monada este o clasa de tipuri in Haskell
+
+Functie simpla:
+x -> y --stiind x, obtinem direct y
+Functie imbogatita
+x -> y *** --stiind x, putem sa extragem y si sa producem un efect
+
+Folosind tipul Maybe a
+data Maybe a = Nothing | Just a
+
+f :: Int -> Maybe Int
+f x = if x < 0 then Nothing else Just (x + 1)
+f(-5) --Nothing
+f(1) -- Just 2
+
+
+Cum putem calcula f.f
+
+newtype Writer log a = Writer {runWriter :: (a,log)} 
+--Writer este un tip definit cu newtype care păstrează:(O valoare principală de tip a si un log suplimentar (o informație atașată) de tip log.)
+Tipul Writer este o monada in Haskell
+
+f :: Int −> Writer String Int --intoarce o valoare intreaga, impreuna cu un mesaj de tip string
+f x = if x < 0 then (Writer (−x,"negativ"))
+       else (Writer(x,"pozitiv"))
+
+f(-5) -- Writer (5,"negativ")
+f(10) -- Writer (10,"pozitiv")
+
+
+Clasa de tipuri Monad
+
+class Applicative m => Monad m where
+(>>=) :: m a −> (a −> m b) −> m b
+(>>) :: m a −> m b −> m b
+return :: a −> m a
+
+O monadă este o extensie a clasei Applicative.Aceasta indică faptul că orice instanță a clasei Monad trebuie mai întâi să fie o instanță a clasei Applicative
+
+(>>=) --operația principală a monadelor numita bind, un efect monadic de tip m a, o functie care transforma o valoare de tip a intr-un nou efect monadic m b
+si returneaza un efect monadic m b
+
+(>>) -- o versiune simplificata a lui (>>=) care ignora rezultatul primei actiuni monadice, efectueaza x, apoi efectueaza y, dar ignora rezultatul lui x
+
+Funcția return introduce o valoare de tip a într-un context monadic de tip m a
+
+Monadele -Gestioneaza efectele laterale(oferă o modalitate de a încorpora efecte (precum IO, erori, stări) într-un mod pur, păstrând funcțiile pure.)
+         -Fac posibilă compunerea calculelor(Ele oferă operatorii (>>=) și return, care permit secvențierea calculelor în lanțuri logice)
+         -Abstractizează tipurile complexe(ascund detalii legate de manipularea unui context suplimentar 
+                                          (cum ar fi gestionarea erorilor în Maybe sau manipularea stării într-o monadă State))
+
+Mondaele sunt utile deoarece codul care implementează calculele principale poate fi separat de cel care gestionează efectele sau contextul.
+Ele oferă un cadru pentru a controla:
+                                     -Erorile (ex. Maybe, Either).
+                                     -Starea (ex. State).
+                                     -Fluxurile asincrone (ex. IO, Async).
+                                     -Liste sau calcule non-deterministe (ex. []).
+Monadele oferă o interfață comună pentru contexte diverse, făcând codul mai ușor de generalizat
+
+
+Ex:
+<$> : : Functor f => ( a −> b ) −> f a −> f b --Ia o funcție de tip (a -> b), aplică funcția asupra valorii din contextul f si rezultatul este "ambalat" în același context f.
+getLine : : IO String --Aceasta este o acțiune monadică care citește o linie din intrarea standard și întoarce un String ambalat în IO.
+putStrLn : : String −> IO ( ) --Aceasta este o funcție care ia un String și întoarce o acțiune monadică de tip IO (), care afișează linia respectivă pe ecran.
+
+Operatorul <$> aplică putStrLn asupra rezultatului "ambalat" în IO al lui getLine.
+putStrLn <$> getLine :: IO (IO ()) --getLine produce un String, funcția putStrLn aplicată acelui String produce o nouă acțiune IO deci rezultatul este IO (IO ())
+
+
+
+putStrLn <$> getLine : : IO ( IO ( ) )
