@@ -102,7 +102,7 @@ main = do
   print $ fmap (+1) ma                 -- Just 4 fmap functie din clasa Functor care aplica o functie pe o valoare dintr-un context
 Monada utilizate este Maybe
 
-1. Monada IO
+1. Monada IO(Notatia do)
 Descriere: Gestionează operațiile de intrare/ieșire (I/O).
 main :: IO ()
 main = do
@@ -112,9 +112,18 @@ main = do
 
 2. Monada Maybe
 Descriere: Gestionează valori care pot fi absente (parțialitate).
-safeDiv :: Int -> Int -> Maybe Int
-safeDiv _ 0 = Nothing
-safeDiv x y = Just (x `div` y)
+radical :: Float -> Maybe Float
+radical x
+   | x >= 0 = return (sqrt x)
+   | x < 0 = Nothing
+
+solEq2 : : Float −> Float −> Float −> Maybe Float
+solEq2 0 0 0 = return 0
+solEq2 0 0 c = Nothing
+solEq2 0 b c = return (negate c/b)
+solEq2 a b c = do
+   rDelta <− radical (b*b − 4*a*c)
+   return ((negate b + rDelta) / (2*a))
 
 3. Monada Either
 Descriere: Gestionează valori care pot reprezenta fie un rezultat de succes, fie o eroare (excepții).
@@ -124,11 +133,12 @@ safeDiv x y = Right (x `div` y)
 
 4.Monada [] (lista)
 Gestionează nedeterminismul (calcul cu multiple rezultate).
-pairs :: [a] -> [b] -> [(a, b)]
-pairs xs ys = do
+twiceWhenEven :: [Int] -> [Int]
+twiceWhenEven xs = do
   x <- xs
-  y <- ys
-  return (x, y)
+  if even x
+    then [x*x, x*x]
+    else [x*x]
 
 5. Monada Writer
 Gestionează logging-ul (păstrarea unui jurnal de mesaje).
