@@ -64,13 +64,111 @@ Monadele oferă o interfață comună pentru contexte diverse, făcând codul ma
 
 
 Ex:
-<$> : : Functor f => ( a −> b ) −> f a −> f b --Ia o funcție de tip (a -> b), aplică funcția asupra valorii din contextul f si rezultatul este "ambalat" în același context f.
-getLine : : IO String --Aceasta este o acțiune monadică care citește o linie din intrarea standard și întoarce un String ambalat în IO.
-putStrLn : : String −> IO ( ) --Aceasta este o funcție care ia un String și întoarce o acțiune monadică de tip IO (), care afișează linia respectivă pe ecran.
 
-Operatorul <$> aplică putStrLn asupra rezultatului "ambalat" în IO al lui getLine.
-putStrLn <$> getLine :: IO (IO ()) --getLine produce un String, funcția putStrLn aplicată acelui String produce o nouă acțiune IO deci rezultatul este IO (IO ())
+main :: IO ()
+main = do
+  let action = join $ putStrLn <$> getLine
+  -- Executăm acțiunea
+  action
+
+--In terminal scriem main, programul așteaptă ca utilizatorul să introducă o linie de text.
+--după ce utilizatorul introduce o linie de text și apasă Enter, linia respectivă este afișată pe ecran.
+-- putStrLn <$> getLine creează o acțiune IO (IO ()) care, atunci când este executată, va returna o altă acțiune IO () care afișează linia citită.
 
 
+twoBinds' :: IO ()
+twoBinds' = do
+  putStrLn "Nume: " --p
+  name <- getLine
+  putStrLn "Varsta: "
+  age <- getLine
+  putStrLn ("Numele meu este " ++ name ++ " si am " ++ age ++ " de ani.")
 
-putStrLn <$> getLine : : IO ( IO ( ) )
+main :: IO () --folosim monada IO
+main = twoBinds'
+
+putStrLn ia un String ca argument și returnează o acțiune IO () care, atunci când este executată, afișează șirul de caractere pe ecran, 
+urmat de un caracter de sfârșit de linie (newline).
+getLine este o acțiune IO care, atunci când este executată, citește o linie de text de la intrarea standard (de obicei tastatura) 
+și returnează șirul de caractere citit, ambalat într-o acțiune IO
+
+main :: IO ()
+main = do
+  let ma = Just 3 --ma este o valoare de tip Maybe Int
+  let mf = Just (*2) --mf este o valoare de tip Maybe (Int -> Int)
+  print $ ma >>= (\x -> Just (x + 1))  -- Just 4 >>= utliziat pentru a extrage valoarea din Just
+  print $ pure 3 :: Maybe Int          -- Just 3 pure ambaleaza o valoare intr-un context
+  print $ mf <*> ma                    -- Just 6 utilizat pentru a aplica o functie dintr-un context pe o valoare dintr-un alt context
+  print $ fmap (+1) ma                 -- Just 4 fmap functie din clasa Functor care aplica o functie pe o valoare dintr-un context
+Monada utilizate este Maybe
+
+1. Monada IO
+Descriere: Gestionează operațiile de intrare/ieșire (I/O).
+main :: IO ()
+main = do
+  putStrLn "Nume: "
+  name <- getLine
+  putStrLn ("Salut, " ++ name ++ "!")
+
+2. Monada Maybe
+Descriere: Gestionează valori care pot fi absente (parțialitate).
+safeDiv :: Int -> Int -> Maybe Int
+safeDiv _ 0 = Nothing
+safeDiv x y = Just (x `div` y)
+
+3. Monada Either
+Descriere: Gestionează valori care pot reprezenta fie un rezultat de succes, fie o eroare (excepții).
+safeDiv :: Int -> Int -> Either String Int
+safeDiv _ 0 = Left "Division by zero"
+safeDiv x y = Right (x `div` y)
+
+4.Monada [] (lista)
+Gestionează nedeterminismul (calcul cu multiple rezultate).
+pairs :: [a] -> [b] -> [(a, b)]
+pairs xs ys = do
+  x <- xs
+  y <- ys
+  return (x, y)
+
+5. Monada Writer
+Gestionează logging-ul (păstrarea unui jurnal de mesaje).
+import Control.Monad.Writer
+
+logNumber :: Int -> Writer [String] Int
+logNumber x = do
+  tell ["Got number: " ++ show x]
+  return x
+
+example :: Writer [String] Int
+example = do
+  a <- logNumber 3
+  b <- logNumber 5
+  return (a + b)
+
+6. Monada State
+Descriere: Gestionează starea (modificarea și accesarea stării).
+import Control.Monad.State
+
+increment :: State Int Int
+increment = do
+  n <- get
+  put (n + 1)
+  return n
+
+example :: State Int Int
+example = do
+  a <- increment
+  b <- increment
+  return (a + b)
+
+7. Monada Reader
+Descriere: Gestionează memoria read-only (accesarea unui context imutabil).
+import Control.Monad.Reader
+
+askName :: Reader String String
+askName = do
+  name <- ask
+  return ("Hello, " ++ name ++ "!")
+
+example :: Reader String String
+example = askName
