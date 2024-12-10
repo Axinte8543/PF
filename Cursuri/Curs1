@@ -102,6 +102,7 @@ z = let x = 3 in x
 
 z va avea 3 si x va avea 1
 
+x /= 0 --x diferit de 0
 
 x  =  let
              z = 5
