@@ -1,20 +1,35 @@
 Clasa de tipuri Functor
 
+Functor este o abstracție utilă pentru lucrul cu structuri de date care conțin elemente transformabile:
+-Liste ([])
+-Opțiuni (Maybe)
+-Rezultate cu erori (Either)
+-Structuri mai complexe, cum ar fi arbori binari sau IO.
+
+Clasa Functor generalizează conceptul de mapare a unei funcții peste elementele unei structuri, indiferent de natura structurii. 
+Dacă înțelegi cum funcționează map pentru liste, îți poți extinde intuiția la alte tipuri de date folosind fmap.
+
 Cum putem sa generalizam functia map la alte tipuri parametrizate?
 
-class Functor f where
+class Functor f where --f constructor de tip
   fmap :: (a -> b) -> f a -> f b
 
+--Funcția fmap ia o funcție obișnuită și o aplică fiecărui element din structura f, fără a schimba structura în sine.
 instance Functor [] where
-  fmap = map
+  fmap = map --fmap este pur și simplu echivalentul funcției map, care aplică o funcție fiecărui element dintr-o listă
+fmap (*2) [1, 2, 3] -- [2, 4, 6]
 
 instance Functor Maybe where
   fmap f Nothing = Nothing
   fmap f (Just x) = Just (f x)
+fmap (+1) (Just 5)  -- Just 6
+fmap (+1) Nothing   -- Nothing
 
 instance Functor (Either e) where
     fmap _ (Left x) = Left x
     fmap f (Right y) = Right (f y)
+fmap (*2) (Right 10) -- Right 20
+fmap (*2) (Left "Eroare") -- Left "Eroare"
 
 data Arbore a = Nil
               | Nod a (Arbore a) (Arbore a)
