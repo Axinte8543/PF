@@ -19,6 +19,8 @@ compose = foldr(.) id
 >compose [(+1),(^2)] 3
 10
 
+foldl :: (b −> a −> b) −> b −> [a] −> b
+
 myFoldl :: (a -> b -> b) -> b -> [a] -> b
 myFoldl _ i [] = i
 myFoldl f i (x:xs) = f x (myFoldl f i xs)
