@@ -63,10 +63,10 @@ main = do
 Sintaxa:
 
 Comentarii:
-−− comentariu pe o l i n i e
+−− comentariu pe o linie
 { − comentariu pe
 mai multe
-l i n i i −}
+linii −}
 
 Identificatori:
 • siruri formate din litere, cifre, caracterele _ si ’ (apostrof)
